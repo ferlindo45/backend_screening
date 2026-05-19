@@ -1,0 +1,17 @@
+yfinance
+pandas>=2.2.0
+numpy>=1.26.0
+scikit-learn>=1.4.0
+xgboost
+transformers
+torch
+fastapi
+uvicorn
+python-dotenv
+joblib
+pydantic
+requests
+beautifulsoup4
+nltk
+slowapi
+psutil
