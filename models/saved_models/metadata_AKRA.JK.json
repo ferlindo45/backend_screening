@@ -1,0 +1,35 @@
+{
+  "stock_code": "AKRA.JK",
+  "trained_date": "2026-05-20T06:52:14.232048",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.597,
+      "f1": 0.5015,
+      "r2": 0.597,
+      "mae": 0.403,
+      "rmse": 0.4985
+    },
+    "xgboost": {
+      "accuracy": 0.5672,
+      "f1": 0.4756,
+      "r2": 0.5672,
+      "mae": 0.4328,
+      "rmse": 0.5244
+    },
+    "logistic_regression": {
+      "accuracy": 0.5771,
+      "f1": 0.4587,
+      "r2": 0.5771,
+      "mae": 0.4229,
+      "rmse": 0.5413
+    },
+    "ensemble": {
+      "accuracy": 0.592,
+      "f1": 0.4925,
+      "r2": 0.592,
+      "mae": 0.408,
+      "rmse": 0.5075
+    }
+  }
+}

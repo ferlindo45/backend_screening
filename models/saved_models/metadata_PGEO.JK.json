@@ -1,0 +1,35 @@
+{
+  "stock_code": "PGEO.JK",
+  "trained_date": "2026-05-20T06:55:31.043896",
+  "samples": 563,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.646,
+      "f1": 0.5134,
+      "r2": 0.646,
+      "mae": 0.354,
+      "rmse": 0.4866
+    },
+    "xgboost": {
+      "accuracy": 0.646,
+      "f1": 0.5555,
+      "r2": 0.646,
+      "mae": 0.354,
+      "rmse": 0.4445
+    },
+    "logistic_regression": {
+      "accuracy": 0.6018,
+      "f1": 0.4948,
+      "r2": 0.6018,
+      "mae": 0.3982,
+      "rmse": 0.5052
+    },
+    "ensemble": {
+      "accuracy": 0.6637,
+      "f1": 0.5489,
+      "r2": 0.6637,
+      "mae": 0.3363,
+      "rmse": 0.4511
+    }
+  }
+}

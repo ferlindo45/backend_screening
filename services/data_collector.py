@@ -82,7 +82,7 @@ class DataCollector:
     
     def get_fundamental_data(self, stock_code: str) -> Dict:
         """
-        Get fundamental data for a stock (using Yahoo Finance)
+        Get fundamental data for a stock from local CSV
         
         Args:
             stock_code: Stock code
@@ -91,28 +91,63 @@ class DataCollector:
             Dictionary with fundamental metrics
         """
         try:
-            ticker = yf.Ticker(stock_code)
-            info = ticker.info
+            csv_path = os.path.join(self.data_dir, "lq45_fundamental.csv")
             
-            # Extract fundamental metrics with fallback to dummy values
+            if not os.path.exists(csv_path):
+                print(f"Warning: Fundamental CSV not found at {csv_path}")
+                raise FileNotFoundError("Fundamental CSV not found")
+                
+            df = pd.read_csv(csv_path)
+            
+            # Clean stock code to match CSV format (remove .JK if present)
+            clean_code = stock_code.replace(".JK", "") if stock_code.endswith(".JK") else stock_code
+            
+            # Ensure ticker column exists and is string
+            if 'ticker' not in df.columns:
+                raise ValueError("CSV missing 'ticker' column")
+            df['ticker'] = df['ticker'].astype(str)
+            
+            stock_df = df[df['ticker'] == clean_code].copy()
+            
+            if stock_df.empty:
+                print(f"Warning: Stock {clean_code} not found in fundamental CSV")
+                raise ValueError(f"Stock {clean_code} not found in CSV")
+            
+            # --- FIX: Always use the LATEST available data ---
+            # Step 1: Define period ranking (newest first)
+            period_rank = {
+                'February - July 2026': 5,
+                'February - July 2025': 4,
+                'February - July 2024': 3,
+                '2023': 2,
+                'Unknown': 1
+            }
+            stock_df['_period_rank'] = stock_df['pdf_period'].map(period_rank).fillna(0)
+            
+            # Step 2: Parse report_date (e.g. "Sep 2025") into sortable datetime
+            stock_df['_report_dt'] = pd.to_datetime(stock_df['report_date'], format='%b %Y', errors='coerce')
+            
+            # Step 3: Sort by period rank DESC, then by report date DESC — take the absolute latest row
+            stock_df = stock_df.sort_values(['_period_rank', '_report_dt'], ascending=[False, False])
+            latest_data = stock_df.iloc[0]
+            
+            print(f"  [Fundamental] {clean_code}: Using data from period='{latest_data['pdf_period']}', report_date='{latest_data['report_date']}'")
+            
             fundamental = {
-                'roe': info.get('returnOnEquity', 0.15),
-                'per': info.get('trailingPE', 15.0),
-                'der': info.get('debtToEquity', 0.5),
-                'eps': info.get('trailingEps', 500),
-                'dividend': info.get('dividendYield', 0.03),
+                'roe': float(latest_data.get('roe', 0)),
+                'per': float(latest_data.get('per', 0)),
+                'der': float(latest_data.get('der', 0)),
+                'eps': float(latest_data.get('eps', 0)),
+                'dividend': float(latest_data.get('dividend_yield', 0)) / 100.0 if pd.notna(latest_data.get('dividend_yield')) else 0.0,
                 'is_dummy': False
             }
             
-            # Clean and convert values
+            # Clean up NaNs
             for key in fundamental:
                 if key == 'is_dummy': continue
-                if fundamental[key] is None:
-                    fundamental[key] = 0
-                elif isinstance(fundamental[key], (int, float)):
-                    if key == 'roe':
-                        fundamental[key] = fundamental[key] * 100 if fundamental[key] < 1 else fundamental[key]
-            
+                if pd.isna(fundamental[key]):
+                    fundamental[key] = 0.0
+                    
             return fundamental
             
         except Exception as e:

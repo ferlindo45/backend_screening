@@ -1,0 +1,35 @@
+{
+  "stock_code": "NCKL.JK",
+  "trained_date": "2026-05-20T06:55:20.096945",
+  "samples": 533,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.4766,
+      "f1": 0.441,
+      "r2": 0.4766,
+      "mae": 0.5234,
+      "rmse": 0.559
+    },
+    "xgboost": {
+      "accuracy": 0.4579,
+      "f1": 0.3535,
+      "r2": 0.4579,
+      "mae": 0.5421,
+      "rmse": 0.6465
+    },
+    "logistic_regression": {
+      "accuracy": 0.6355,
+      "f1": 0.511,
+      "r2": 0.6355,
+      "mae": 0.3645,
+      "rmse": 0.489
+    },
+    "ensemble": {
+      "accuracy": 0.4579,
+      "f1": 0.3535,
+      "r2": 0.4579,
+      "mae": 0.5421,
+      "rmse": 0.6465
+    }
+  }
+}

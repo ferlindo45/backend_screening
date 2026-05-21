@@ -1,0 +1,35 @@
+{
+  "stock_code": "ACES.JK",
+  "trained_date": "2026-05-20T06:56:18.654880",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.2886,
+      "f1": 0.2883,
+      "r2": 0.2886,
+      "mae": 0.7114,
+      "rmse": 0.7117
+    },
+    "xgboost": {
+      "accuracy": 0.5473,
+      "f1": 0.4806,
+      "r2": 0.5473,
+      "mae": 0.4527,
+      "rmse": 0.5194
+    },
+    "logistic_regression": {
+      "accuracy": 0.8358,
+      "f1": 0.4836,
+      "r2": 0.8358,
+      "mae": 0.1642,
+      "rmse": 0.5164
+    },
+    "ensemble": {
+      "accuracy": 0.5522,
+      "f1": 0.4884,
+      "r2": 0.5522,
+      "mae": 0.4478,
+      "rmse": 0.5116
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "stock_code": "BBNI.JK",
+  "trained_date": "2026-05-20T06:52:48.785703",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.6119,
+      "f1": 0.5998,
+      "r2": 0.6119,
+      "mae": 0.3881,
+      "rmse": 0.4002
+    },
+    "xgboost": {
+      "accuracy": 0.6418,
+      "f1": 0.6055,
+      "r2": 0.6418,
+      "mae": 0.3582,
+      "rmse": 0.3945
+    },
+    "logistic_regression": {
+      "accuracy": 0.6667,
+      "f1": 0.5002,
+      "r2": 0.6667,
+      "mae": 0.3333,
+      "rmse": 0.4998
+    },
+    "ensemble": {
+      "accuracy": 0.6617,
+      "f1": 0.6222,
+      "r2": 0.6617,
+      "mae": 0.3383,
+      "rmse": 0.3778
+    }
+  }
+}

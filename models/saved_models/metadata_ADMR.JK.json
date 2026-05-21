@@ -1,0 +1,35 @@
+{
+  "stock_code": "ADMR.JK",
+  "trained_date": "2026-05-20T06:52:03.112667",
+  "samples": 847,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5235,
+      "f1": 0.3744,
+      "r2": 0.5235,
+      "mae": 0.4765,
+      "rmse": 0.6256
+    },
+    "xgboost": {
+      "accuracy": 0.5353,
+      "f1": 0.4073,
+      "r2": 0.5353,
+      "mae": 0.4647,
+      "rmse": 0.5927
+    },
+    "logistic_regression": {
+      "accuracy": 0.5059,
+      "f1": 0.3359,
+      "r2": 0.5059,
+      "mae": 0.4941,
+      "rmse": 0.6641
+    },
+    "ensemble": {
+      "accuracy": 0.5176,
+      "f1": 0.3618,
+      "r2": 0.5176,
+      "mae": 0.4824,
+      "rmse": 0.6382
+    }
+  }
+}

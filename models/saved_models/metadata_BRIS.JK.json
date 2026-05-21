@@ -1,0 +1,35 @@
+{
+  "stock_code": "BRIS.JK",
+  "trained_date": "2026-05-20T06:56:34.866117",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.199,
+      "f1": 0.166,
+      "r2": 0.199,
+      "mae": 0.801,
+      "rmse": 0.834
+    },
+    "xgboost": {
+      "accuracy": 0.2438,
+      "f1": 0.2254,
+      "r2": 0.2438,
+      "mae": 0.7562,
+      "rmse": 0.7746
+    },
+    "logistic_regression": {
+      "accuracy": 0.199,
+      "f1": 0.166,
+      "r2": 0.199,
+      "mae": 0.801,
+      "rmse": 0.834
+    },
+    "ensemble": {
+      "accuracy": 0.199,
+      "f1": 0.166,
+      "r2": 0.199,
+      "mae": 0.801,
+      "rmse": 0.834
+    }
+  }
+}

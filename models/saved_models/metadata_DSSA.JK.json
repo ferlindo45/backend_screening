@@ -1,0 +1,35 @@
+{
+  "stock_code": "DSSA.JK",
+  "trained_date": "2026-05-20T06:53:39.796437",
+  "samples": 958,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5573,
+      "f1": 0.3579,
+      "r2": 0.5573,
+      "mae": 0.4427,
+      "rmse": 0.6421
+    },
+    "xgboost": {
+      "accuracy": 0.5781,
+      "f1": 0.3663,
+      "r2": 0.5781,
+      "mae": 0.4219,
+      "rmse": 0.6337
+    },
+    "logistic_regression": {
+      "accuracy": 0.3542,
+      "f1": 0.2843,
+      "r2": 0.3542,
+      "mae": 0.6458,
+      "rmse": 0.7157
+    },
+    "ensemble": {
+      "accuracy": 0.5469,
+      "f1": 0.3535,
+      "r2": 0.5469,
+      "mae": 0.4531,
+      "rmse": 0.6465
+    }
+  }
+}

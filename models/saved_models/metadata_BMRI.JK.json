@@ -1,0 +1,35 @@
+{
+  "stock_code": "BMRI.JK",
+  "trained_date": "2026-05-20T06:53:06.059753",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5323,
+      "f1": 0.5272,
+      "r2": 0.5323,
+      "mae": 0.4677,
+      "rmse": 0.4728
+    },
+    "xgboost": {
+      "accuracy": 0.5274,
+      "f1": 0.5216,
+      "r2": 0.5274,
+      "mae": 0.4726,
+      "rmse": 0.4784
+    },
+    "logistic_regression": {
+      "accuracy": 0.4478,
+      "f1": 0.3764,
+      "r2": 0.4478,
+      "mae": 0.5522,
+      "rmse": 0.6236
+    },
+    "ensemble": {
+      "accuracy": 0.5075,
+      "f1": 0.5062,
+      "r2": 0.5075,
+      "mae": 0.4925,
+      "rmse": 0.4938
+    }
+  }
+}

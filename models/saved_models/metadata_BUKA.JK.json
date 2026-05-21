@@ -1,0 +1,35 @@
+{
+  "stock_code": "BUKA.JK",
+  "trained_date": "2026-05-20T06:57:19.874723",
+  "samples": 949,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.6684,
+      "f1": 0.4659,
+      "r2": 0.6684,
+      "mae": 0.3316,
+      "rmse": 0.5341
+    },
+    "xgboost": {
+      "accuracy": 0.6632,
+      "f1": 0.4517,
+      "r2": 0.6632,
+      "mae": 0.3368,
+      "rmse": 0.5483
+    },
+    "logistic_regression": {
+      "accuracy": 0.5368,
+      "f1": 0.5364,
+      "r2": 0.5368,
+      "mae": 0.4632,
+      "rmse": 0.4636
+    },
+    "ensemble": {
+      "accuracy": 0.6684,
+      "f1": 0.4659,
+      "r2": 0.6684,
+      "mae": 0.3316,
+      "rmse": 0.5341
+    }
+  }
+}

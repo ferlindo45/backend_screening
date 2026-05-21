@@ -1,0 +1,35 @@
+{
+  "stock_code": "MAPA.JK",
+  "trained_date": "2026-05-20T06:56:59.893873",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.4527,
+      "f1": 0.4427,
+      "r2": 0.4527,
+      "mae": 0.5473,
+      "rmse": 0.5573
+    },
+    "xgboost": {
+      "accuracy": 0.4229,
+      "f1": 0.4106,
+      "r2": 0.4229,
+      "mae": 0.5771,
+      "rmse": 0.5894
+    },
+    "logistic_regression": {
+      "accuracy": 0.4925,
+      "f1": 0.4869,
+      "r2": 0.4925,
+      "mae": 0.5075,
+      "rmse": 0.5131
+    },
+    "ensemble": {
+      "accuracy": 0.4328,
+      "f1": 0.4224,
+      "r2": 0.4328,
+      "mae": 0.5672,
+      "rmse": 0.5776
+    }
+  }
+}

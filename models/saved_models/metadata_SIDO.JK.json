@@ -1,0 +1,35 @@
+{
+  "stock_code": "SIDO.JK",
+  "trained_date": "2026-05-20T06:57:07.942780",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.4677,
+      "f1": 0.4479,
+      "r2": 0.4677,
+      "mae": 0.5323,
+      "rmse": 0.5521
+    },
+    "xgboost": {
+      "accuracy": 0.5622,
+      "f1": 0.4613,
+      "r2": 0.5622,
+      "mae": 0.4378,
+      "rmse": 0.5387
+    },
+    "logistic_regression": {
+      "accuracy": 0.3234,
+      "f1": 0.2728,
+      "r2": 0.3234,
+      "mae": 0.6766,
+      "rmse": 0.7272
+    },
+    "ensemble": {
+      "accuracy": 0.4627,
+      "f1": 0.4478,
+      "r2": 0.4627,
+      "mae": 0.5373,
+      "rmse": 0.5522
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "stock_code": "TPIA.JK",
+  "trained_date": "2026-05-20T06:58:11.631820",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.4627,
+      "f1": 0.4611,
+      "r2": 0.4627,
+      "mae": 0.5373,
+      "rmse": 0.5389
+    },
+    "xgboost": {
+      "accuracy": 0.5373,
+      "f1": 0.5013,
+      "r2": 0.5373,
+      "mae": 0.4627,
+      "rmse": 0.4987
+    },
+    "logistic_regression": {
+      "accuracy": 0.4826,
+      "f1": 0.4745,
+      "r2": 0.4826,
+      "mae": 0.5174,
+      "rmse": 0.5255
+    },
+    "ensemble": {
+      "accuracy": 0.4677,
+      "f1": 0.4571,
+      "r2": 0.4677,
+      "mae": 0.5323,
+      "rmse": 0.5429
+    }
+  }
+}

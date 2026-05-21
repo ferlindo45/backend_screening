@@ -1,0 +1,35 @@
+{
+  "stock_code": "BRPT.JK",
+  "trained_date": "2026-05-20T06:53:17.210050",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.3383,
+      "f1": 0.2528,
+      "r2": 0.3383,
+      "mae": 0.6617,
+      "rmse": 0.7472
+    },
+    "xgboost": {
+      "accuracy": 0.398,
+      "f1": 0.3803,
+      "r2": 0.398,
+      "mae": 0.602,
+      "rmse": 0.6197
+    },
+    "logistic_regression": {
+      "accuracy": 0.6418,
+      "f1": 0.3909,
+      "r2": 0.6418,
+      "mae": 0.3582,
+      "rmse": 0.6091
+    },
+    "ensemble": {
+      "accuracy": 0.393,
+      "f1": 0.3762,
+      "r2": 0.393,
+      "mae": 0.607,
+      "rmse": 0.6238
+    }
+  }
+}

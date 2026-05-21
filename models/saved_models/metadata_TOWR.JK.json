@@ -1,0 +1,35 @@
+{
+  "stock_code": "TOWR.JK",
+  "trained_date": "2026-05-20T06:55:58.945013",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5323,
+      "f1": 0.4814,
+      "r2": 0.5323,
+      "mae": 0.4677,
+      "rmse": 0.5186
+    },
+    "xgboost": {
+      "accuracy": 0.5871,
+      "f1": 0.5263,
+      "r2": 0.5871,
+      "mae": 0.4129,
+      "rmse": 0.4737
+    },
+    "logistic_regression": {
+      "accuracy": 0.4627,
+      "f1": 0.4257,
+      "r2": 0.4627,
+      "mae": 0.5373,
+      "rmse": 0.5743
+    },
+    "ensemble": {
+      "accuracy": 0.5622,
+      "f1": 0.4869,
+      "r2": 0.5622,
+      "mae": 0.4378,
+      "rmse": 0.5131
+    }
+  }
+}

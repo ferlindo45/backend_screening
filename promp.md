@@ -10,7 +10,7 @@ Kamu adalah senior full-stack developer Laravel 13. Kamu sedang membangun **fron
 
 - **Layer 1 (Browser):** UI Blade + Alpine.js + Tailwind CSS
 - **Layer 2 (Laravel 13):** Router, Middleware, Controller, Service, Queue, Cache
-- **Layer 3 (Python AI Engine):** `http://127.0.0.1:8000` — 15 endpoint aktif
+- **Layer 3 (Python AI Engine):** `http://127.0.0.1:8000` — 6 endpoint aktif terintegrasi
 
 Sistem ini sudah memiliki Python AI Engine yang berjalan. Tugasmu adalah membangun **seluruh sisi Laravel** dari nol: database, service, controller, view, sampai panel admin — tanpa menyentuh engine.
 
@@ -56,7 +56,7 @@ Buat semua migration file berikut dengan urutan yang benar:
 ```
 - id (bigint, PK)
 - stock_code (varchar 10, indexed)
-- endpoint_type (varchar 50) → nilai: 'full_analysis', 'fundamental', 'fair_value', 'news', 'sentiment', 'stock_info'
+- endpoint_type (varchar 50) → nilai: 'realtime', 'screening', 'stock_detail'
 - raw_json (longtext)
 - created_at (timestamp)
 - expired_at (timestamp, indexed)
@@ -97,7 +97,7 @@ Tambah kolom:
 ```
 
 ### 1.6 Seeder Data
-Buat `StocksSeeder` yang mengisi **45 saham LQ45 lengkap** dengan code, name, dan sector. Gunakan data LQ45 periode terbaru (BBCA, BBRI, BMRI, TLKM, ASII, dst — lengkapi semua 45 saham).
+Buat `StocksSeeder` yang mengisi **63 saham LQ45 lengkap** dengan code, name, dan sector. Daftar saham dapat mengacu pada response API Python.
 
 ---
 
@@ -111,21 +111,12 @@ File: `app/Services/StockApiService.php`
 // Config dari: config('services.stock_engine.url') dan .key
 
 // Method yang WAJIB ada:
-getFullReport(string $code): array
-getMarketOverview(?string $codes = null): array
-getFundamental(string $code): array
-getFairValue(string $code): array
-getNews(string $code): array
-getStockInfo(string $code): array
-getStockSentiment(string $code): array
-predict(array $data): array
-trainModel(string $code): array
-analyzeSentiment(string $text): array
-getStockData(string $code): array
-getSystemHealth(): array
-clearCache(): array
-getDebugFeatures(string $code): array
-checkHealth(): array
+getRealtimeStocks(): array           // GET /public/realtime
+getScreeningList(): array            // GET /public/screening
+getStockDetail(string $code): array  // GET /public/analyze/{stock_code}
+startTraining(): array               // POST /admin/train?stock_code=ALL
+getTrainingStatus(): array           // GET /admin/training-status
+getSystemStatus(): array             // GET /admin/status
 
 // Semua method harus:
 // 1. Wrap dalam try-catch
@@ -152,25 +143,17 @@ Request data saham
 
 TTL per tipe data:
 ```
-full_analysis  → MySQL: 60 menit,  Redis: 10 menit
-fundamental    → MySQL: 120 menit, Redis: 15 menit
-fair_value     → MySQL: 120 menit, Redis: 15 menit
-news           → MySQL: 15 menit,  Redis: 5 menit
-sentiment      → MySQL: 15 menit,  Redis: 5 menit
-stock_info     → MySQL: 5 menit,   Redis: 2 menit
-market_overview → MySQL: 30 menit, Redis: 5 menit
+realtime       → MySQL: 5 menit,   Redis: 2 menit
+screening      → MySQL: 60 menit,  Redis: 10 menit
+stock_detail   → MySQL: 60 menit,  Redis: 10 menit
 ```
 
 Method yang wajib ada:
 ```php
-getFullAnalysis(string $code): array
-getMarketOverview(): array
-getFundamental(string $code): array
-getFairValue(string $code): array
-getNews(string $code): array
-getStockInfo(string $code): array
-getSentiment(string $code): array
-invalidateCache(string $code): void  // Hapus semua cache untuk 1 saham
+getRealtimeStocks(): array       // Cache key: 'realtime'
+getScreeningList(): array        // Cache key: 'screening'
+getStockDetail(string $code): array  // Cache key: "stock_detail_{$code}"
+invalidateCache(string $code): void
 invalidateAllCache(): void
 ```
 
@@ -209,12 +192,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Stock routes
-    Route::prefix('stock')->name('stock.')->group(function () {
+    Route::prefix('screening')->name('screening.')->group(function () {
         Route::get('/', [StockController::class, 'index'])->name('index');
         Route::get('/{code}', [StockController::class, 'show'])->name('show');
-        Route::get('/{code}/fundamental', [StockController::class, 'fundamental'])->name('fundamental');
-        Route::get('/{code}/fairvalue', [StockController::class, 'fairvalue'])->name('fairvalue');
-        Route::get('/{code}/news', [StockController::class, 'news'])->name('news');
     });
     
     // Portfolio routes
@@ -228,19 +208,14 @@ Route::middleware(['auth'])->group(function () {
     // Admin routes
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('index');
-        Route::get('/metrics', [AdminController::class, 'metrics'])->name('metrics');
-        Route::post('/clear-cache', [AdminController::class, 'clearCache'])->name('clear-cache');
-        Route::post('/train-model/{code}', [AdminController::class, 'trainModel'])->name('train-model');
-        Route::get('/debug/{code}', [AdminController::class, 'debug'])->name('debug');
+        Route::post('/train', [AdminController::class, 'trainModel'])->name('train-model');
+        Route::get('/api/status', [AdminController::class, 'apiStatus'])->name('api-status');
     });
 });
 
 // API routes (untuk AJAX request dari frontend)
 Route::prefix('api')->middleware(['auth', 'throttle:60,1'])->group(function () {
-    Route::get('/stock/{code}/info', [StockController::class, 'apiInfo']);
     Route::get('/market/overview', [DashboardController::class, 'apiOverview']);
-    Route::post('/sentiment/analyze', [StockController::class, 'apiSentiment']);
-    Route::get('/portfolio/summary', [PortfolioController::class, 'apiSummary']);
 });
 ```
 
@@ -253,33 +228,29 @@ File: `app/Http/Controllers/DashboardController.php`
 
 ```php
 // Method index():
-// 1. Panggil StockAnalysisService->getMarketOverview()
-// 2. Sortir berdasarkan score tertinggi
-// 3. Hitung statistik: berapa STRONG BUY, HOLD, SELL
-// 4. Pass ke view: $stocks, $stats, $lastUpdated
-// 5. Cache seluruh halaman dengan Laravel Cache (key: 'dashboard_view', ttl: 30 menit)
+// 1. Panggil StockAnalysisService->getRealtimeStocks() untuk harga real-time
+// 2. Panggil StockAnalysisService->getScreeningList() untuk data screening
+// 3. Hitung statistik: berapa STRONG BUY, HOLD, SELL dari screening list
+// 4. Pass ke view: $realtimePrices, $screenings, $stats, $lastUpdated
 
 // Method apiOverview():
-// Return JSON untuk live-update via AJAX polling setiap 5 menit
+// Return JSON dari getRealtimeStocks() untuk live-update via AJAX polling setiap 5 menit
 ```
 
 ### 4.2 `StockController`
 File: `app/Http/Controllers/StockController.php`
 
 ```php
+// index():
+// Panggil StockAnalysisService->getScreeningList()
+// Pass ke view sebagai tabel leaderboard
+
 // show($code):
 // 1. Validate $code ada di tabel stocks
-// 2. Panggil getFullAnalysis() — ini menghasilkan data 3 pilar lengkap
-// 3. Panggil getNews() secara paralel jika memungkinkan
-// 4. Pass ke view dengan tab: Overview | Fundamental | Fair Value | Berita | Sentimen
-
-// fundamental($code), fairvalue($code), news($code):
-// Digunakan jika user klik tab individual — return partial view atau JSON
-
-// apiSentiment():
-// Terima POST { text: string }
-// Panggil StockApiService->analyzeSentiment()
-// Return JSON { score, label, confidence }
+// 2. Panggil StockAnalysisService->getStockDetail($code)
+//    → Ini mengembalikan SEMUA data sekaligus (fundamental.raw_metrics, technical.raw_indicators, sentiment)
+// 3. Pass ke view — semua tab (Overview, Fundamental, Teknikal, Sentimen) dirender dari 1 panggilan ini
+//    Tidak perlu panggilan API terpisah per tab.
 ```
 
 ### 4.3 `PortfolioController`
@@ -287,10 +258,11 @@ File: `app/Http/Controllers/PortfolioController.php`
 
 ```php
 // index():
-// 1. Ambil semua portfolio user dari DB
-// 2. Enrich dengan harga terkini via StockAnalysisService->getStockInfo()
+// 1. Ambil semua portfolio user dari DB Laravel
+// 2. Enrich dengan harga terkini via StockAnalysisService->getRealtimeStocks()
+//    → Cocokkan stock_code portfolio dengan data dari /public/realtime
 // 3. Kalkulasi PnL per saham dan total
-// 4. Ambil performance history untuk chart
+// 4. Ambil performance history untuk chart dari portfolio_snapshots
 
 // store():
 // Validasi: stock_code (exists di stocks), buy_price, quantity, buy_date
@@ -307,20 +279,18 @@ File: `app/Http/Controllers/AdminController.php`
 
 ```php
 // index():
-// Overview sistem: total stocks, cache hit rate, engine status
+// 1. Panggil StockApiService->getSystemStatus() → GET /admin/status
+// 2. Panggil StockApiService->getTrainingStatus() → GET /admin/training-status
+// 3. Pass ke view: total saham, sudah dilatih berapa, status training
 
-// metrics():
-// Real-time dari StockApiService->getSystemHealth()
-// Return JSON jika request AJAX, view jika biasa
+// trainModel():
+// 1. Panggil StockApiService->startTraining() → POST /admin/train?stock_code=ALL
+// 2. Return redirect dengan flash "Training dimulai di background"
 
-// clearCache():
-// 1. Panggil StockApiService->clearCache() ke engine
-// 2. Panggil StockAnalysisService->invalidateAllCache() (Redis + MySQL)
-// 3. Return redirect dengan flash
-
-// trainModel($code):
-// Dispatch ke Queue Job: TrainModelJob
-// Return immediately dengan pesan "training dimulai"
+// apiStatus():
+// Polling endpoint via AJAX untuk progress bar
+// Panggil StockApiService->getTrainingStatus()
+// Return JSON { status, progress, total, current_stock, logs }
 ```
 
 ---
@@ -331,13 +301,12 @@ File: `app/Http/Controllers/AdminController.php`
 File: `app/Jobs/TrainModelJob.php`
 
 ```php
-// Constructor: terima $stockCode
+// Constructor: terima string $mode = 'ALL' (atau kode saham spesifik)
 // Handle:
-// 1. Log::info("Starting training for {$stockCode}")
-// 2. Panggil StockApiService->trainModel($stockCode)
-// 3. Setelah selesai, invalidate cache untuk stock tersebut
-// 4. Kirim notifikasi (database notification) ke admin
-// 5. Log::info("Training complete for {$stockCode}")
+// 1. Log::info("Starting training...")
+// 2. Panggil StockApiService->startTraining() → POST /admin/train?stock_code=ALL
+// 3. Training berjalan di sisi Python secara background
+// 4. Log::info("Training request sent")
 
 // Config: queue 'ai-training', timeout 600 detik, retry 1 kali
 ```
@@ -346,11 +315,11 @@ File: `app/Jobs/TrainModelJob.php`
 File: `app/Jobs/RefreshDashboardCacheJob.php`
 
 ```php
-// Jalankan getMarketOverview() di background
+// Jalankan StockApiService->getScreeningList() di background
 // Paksa refresh cache (bypass existing cache)
 // Queue: 'cache-refresh', timeout 120 detik
 
-// Di-schedule setiap 30 menit via App\Console\Kernel atau routes/console.php
+// Di-schedule setiap 30 menit via routes/console.php
 ```
 
 ### 5.3 `TakePortfolioSnapshotJob`
@@ -403,7 +372,7 @@ Komponen yang harus ada:
   Versi sistem | Status engine (hijau/merah)
 ```
 
-Tambahkan komponen kecil di header: **indikator status engine** yang memanggil `/api/health` setiap 60 detik via Alpine.js — tampilkan dot hijau "Engine Online" atau merah "Engine Offline".
+Tambahkan komponen kecil di header: **indikator status engine** yang memanggil `http://127.0.0.1:8000/` (health check) setiap 60 detik via Alpine.js — tampilkan dot hijau "Engine Online" atau merah "Engine Offline".
 
 ---
 
@@ -435,14 +404,14 @@ Harga: Rp 9.250        Δ +1.2%
 
 Kartu harus responsif: 4 kolom desktop, 2 tablet, 1 mobile.
 
-Klik kartu → navigate ke `/stock/{code}`.
+Klik kartu → navigate ke `/screening/{code}`.
 
 **Bagian D — Live Update**
 Alpine.js polling setiap 5 menit ke `/api/market/overview` untuk refresh data tanpa reload halaman.
 
 ---
 
-### 7.3 Detail Saham: `stock/show.blade.php`
+### 7.3 Detail Saham: `screening/show.blade.php`
 
 **Header Saham**
 ```
@@ -453,7 +422,7 @@ Score keseluruhan (besar, dengan progress ring)
 
 **Tab Navigator**
 ```
-[Overview] [Fundamental] [Fair Value] [Berita & Sentimen] [Data Historis]
+[Overview] [Fundamental] [Teknikal] [Berita & Sentimen]
 ```
 
 **Tab 1 — Overview**
@@ -472,49 +441,39 @@ Rekomendasi Aksi:
 
 **Tab 2 — Fundamental**
 ```
-Tabel metrik:
-ROE | PER | PBV | DER | EPS | Revenue Growth | Net Profit Margin | Cashflow
+Tabel metrik (Ambil nilainya dari `fundamental.raw_metrics`):
+ROE | PER | DER | EPS | Dividend Yield
 
 Setiap metrik:
-  Nama | Nilai | Benchmark Sektor | Status (hijau/kuning/merah)
-
+  Nama | Nilai 
 Keterangan singkat tentang arti masing-masing metrik
 ```
 
-**Tab 3 — Fair Value**
+**Tab 3 — Teknikal**
 ```
-4 Metode Valuasi (card per metode):
-  DCF Value        | Hasil: Rp X.XXX | Margin of Safety: +12%
-  PBV Intrinsic    | Hasil: Rp X.XXX | Status: Undervalued
-  DDM Value        | Hasil: Rp X.XXX | Status: Overvalued
-  Excess Returns   | Hasil: Rp X.XXX | Status: Fair
+Ambil dari `technical.raw_indicators`:
+  RSI: 45.5 (interpretasi: Netral, tidak overbought/oversold)
+  MACD: 1.25 (interpretasi: Bullish)
+  MA20: Rp 4.450 (harga di atas MA20 = positif)
+  MA50: Rp 4.300 (harga di atas MA50 = positif)
 
-Harga Pasar Sekarang vs Rata-rata Fair Value
-Kesimpulan: Undervalued / Fairly Valued / Overvalued
+Trend prediksi dari `technical.details.prediction_trend`: Bullish / Bearish / Neutral
+Skor teknikal dari `technical.score`: 75.0
+Rationale dari `technical.rationale`
 ```
 
 **Tab 4 — Berita & Sentimen**
 ```
-Skor Sentimen Agregat (gauge besar: Positif/Netral/Negatif)
-Jumlah berita dianalisis
+Skor Sentimen Agregat dari `sentiment.score` (gauge besar: Positif/Netral/Negatif)
+Jumlah berita dari `sentiment.details.news_analyzed`
+Label dari `sentiment.status`: Positive / Negative / Neutral
 
-List berita terbaru:
-  [Judul Berita] [Sumber] [Waktu]
-  [Skor Sentimen per artikel: badge warna]
-  [Preview 2 baris] [Tombol: Baca selengkapnya →]
-
-Analisis Sentimen Manual:
-  Textarea input teks bebas
-  Tombol "Analisis"
-  Hasil: score + label + confidence (muncul di bawah tanpa reload)
+List berita terbaru dari `sentiment.details.top_headlines`:
+  [Judul Berita]
+  [Badge sentimen: hijau Positive / merah Negative / kuning Neutral]
 ```
 
-**Tab 5 — Data Historis**
-```
-Pilihan periode: 1M | 3M | 6M | 1Y
-Chart.js line chart: Harga OHLCV
-Tabel data historis dengan scroll
-```
+
 
 ---
 
@@ -558,36 +517,21 @@ Submit via AJAX, update tabel tanpa reload
 
 **Bagian A — System Status**
 ```
-Card: CPU Usage | RAM Usage | Status Model (Loaded/Not Loaded)
-Data dari /metrics, auto-refresh setiap 30 detik via Alpine.js
+Card: Total Saham Terdaftar | Sudah Di-training | Model Files | Status Database
+Data dari StockApiService->getSystemStatus() → GET /admin/status
+auto-refresh setiap 30 detik via Alpine.js
 ```
 
-**Bagian B — Cache Management**
+**Bagian B — Model Training**
 ```
-Statistik cache:
-  Total record di analysis_cache | Cache yang masih valid | Cache expired
-  
-Tombol aksi:
-  [Bersihkan Semua Cache] → konfirmasi modal → POST /admin/clear-cache
-  
-Tabel cache per saham:
-  Kode | Tipe | Dibuat | Expired | Status | Aksi (hapus per item)
-```
+Tombol besar: [Mulai Training AI Massal] → POST /admin/train?stock_code=ALL
 
-**Bagian C — Model Training**
-```
-Tabel saham LQ45 dengan kolom:
-  Kode | Nama | Status Model | Terakhir Dilatih | Aksi
-
-Aksi: [Train Ulang] → dispatch TrainModelJob → tampilkan "Training dimulai..."
-Filter: belum dilatih | sudah dilatih | error
-```
-
-**Bagian D — Debug Tools**
-```
-Input kode saham + Tombol "Debug Feature Extraction"
-Tampilkan hasil JSON dari /debug/features/{code}
-Format JSON tree yang bisa di-expand/collapse (Alpine.js)
+Progress Bar (muncul setelah tombol diklik):
+  Polling setiap 2 detik ke StockApiService->getTrainingStatus() → GET /admin/training-status
+  Tampilkan: progress bar (progress/total * 100)%
+  Tampilkan: "Sedang melatih: {current_stock}"
+  Tampilkan: daftar logs (scrollable)
+  Jika status == 'idle': sembunyikan progress bar, tampilkan "Selesai!"
 ```
 
 ---
@@ -609,8 +553,8 @@ Props: `$score` (0-100), `$label`, `$color`
 Render semi-circle progress gauge dengan SVG
 
 ### `metric-table-row.blade.php`
-Props: `$name`, `$value`, `$benchmark`, `$status`
-Render satu baris tabel fundamental
+Props: `$name`, `$value`, `$description`
+Render satu baris tabel metrik fundamental/teknikal
 
 ### `skeleton-card.blade.php`
 Render skeleton loading untuk satu stock card (animasi pulse)
@@ -644,15 +588,16 @@ Implementasikan interaksi berikut tanpa full page reload:
 ```javascript
 // x-data="{ activeTab: 'overview' }"
 // Ganti konten tab tanpa reload
-// Lazy load tab Fundamental, Fair Value jika belum pernah dibuka
-// (fetch AJAX ke endpoint masing-masing, cache hasilnya di JS state)
+// SEMUA data sudah tersedia dari 1 panggilan getStockDetail()
+// Tidak perlu lazy load atau AJAX terpisah per tab
 ```
 
-### Analisis Sentimen Manual
+### Admin Training Progress
 ```javascript
-// Submit form → fetch POST ke /api/sentiment/analyze
-// Tampilkan loading spinner
-// Inject hasil (score, label) ke DOM tanpa reload
+// Setelah klik tombol "Mulai Training", jalankan polling:
+// setInterval(() => fetch('/admin/api/status'), 2000)
+// Update progress bar dan log list secara real-time
+// Berhenti polling jika data.status === 'idle'
 ```
 
 ### Portfolio Inline Edit
@@ -689,6 +634,15 @@ REDIS_PORT=6379
 # Queue worker config
 QUEUE_RETRY_AFTER=700
 ```
+
+> ⚠️ **Catatan:** Variabel berikut ada di `.env` **Python Engine** (bukan Laravel), namun admin perlu tahu agar bisa update manual jika kebijakan BI berubah:
+> ```
+> # Variabel di Python Engine .env (c:\xampp\htdocs\python-api\.env)
+> BI_RATE=5.75           # Suku bunga BI terkini — mempengaruhi discount rate valuasi
+> INFLATION_RATE=2.5     # Inflasi YoY terkini
+> IHSG_TREND=0.05        # Estimasi trend IHSG tahunan (5%)
+> ```
+> Update ketiga nilai ini setiap kali BI mengubah suku bunga, lalu restart Python Engine.
 
 ### 10.3 Scheduler di `routes/console.php`:
 ```php
@@ -753,11 +707,11 @@ Pastikan semua item ini sudah diimplementasikan:
 **Database**
 - [ ] Semua 5 migration sudah dibuat dengan benar
 - [ ] Semua foreign key dan index sudah terpasang
-- [ ] Seeder 45 saham LQ45 sudah lengkap
+- [ ] Seeder 63 saham LQ45 sudah lengkap
 
 **Backend**
-- [ ] `StockApiService` — semua 15 method, ada try-catch & logging
-- [ ] `StockAnalysisService` — double cache layer (Redis + MySQL)
+- [ ] `StockApiService` — semua 6 method (getRealtimeStocks, getScreeningList, getStockDetail, startTraining, getTrainingStatus, getSystemStatus), ada try-catch & logging
+- [ ] `StockAnalysisService` — double cache layer (Redis + MySQL) dengan 3 tipe cache
 - [ ] `PortfolioService` — kalkulasi PnL & history
 - [ ] Semua 4 controller sudah ada dengan method lengkap
 - [ ] 3 Queue Jobs sudah ada dan terdaftar
@@ -767,11 +721,11 @@ Pastikan semua item ini sudah diimplementasikan:
 **Frontend**
 - [ ] Layout dengan sidebar, header (search + status engine), footer
 - [ ] Dashboard dengan grid kartu saham + filter/sort + live update
-- [ ] Detail saham dengan 5 tab dan semua konten per tab
+- [ ] Detail saham dengan 4 tab (Overview, Fundamental, Teknikal, Sentimen) dan semua konten per tab
 - [ ] Portofolio dengan chart + tabel + modal tambah
-- [ ] Admin panel dengan semua 4 bagian
+- [ ] Admin panel dengan training button + progress bar + system status
 - [ ] Semua 6 komponen Blade reusable
-- [ ] Semua 5 Alpine.js interaction sudah berjalan
+- [ ] Semua 4 Alpine.js interaction sudah berjalan (filter, search, tab, training progress)
 
 **Konfigurasi**
 - [ ] `config/services.php` sudah diupdate
@@ -828,7 +782,7 @@ resources/views/
 │   └── alert-flash.blade.php
 ├── dashboard/
 │   └── index.blade.php
-├── stock/
+├── screening/
 │   └── show.blade.php
 ├── portfolio/
 │   └── index.blade.php

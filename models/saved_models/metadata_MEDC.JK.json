@@ -1,0 +1,35 @@
+{
+  "stock_code": "MEDC.JK",
+  "trained_date": "2026-05-20T06:55:14.085294",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5672,
+      "f1": 0.446,
+      "r2": 0.5672,
+      "mae": 0.4328,
+      "rmse": 0.554
+    },
+    "xgboost": {
+      "accuracy": 0.5721,
+      "f1": 0.4556,
+      "r2": 0.5721,
+      "mae": 0.4279,
+      "rmse": 0.5444
+    },
+    "logistic_regression": {
+      "accuracy": 0.4627,
+      "f1": 0.3585,
+      "r2": 0.4627,
+      "mae": 0.5373,
+      "rmse": 0.6415
+    },
+    "ensemble": {
+      "accuracy": 0.5622,
+      "f1": 0.4363,
+      "r2": 0.5622,
+      "mae": 0.4378,
+      "rmse": 0.5637
+    }
+  }
+}

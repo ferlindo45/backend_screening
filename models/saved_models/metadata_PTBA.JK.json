@@ -1,0 +1,35 @@
+{
+  "stock_code": "PTBA.JK",
+  "trained_date": "2026-05-20T06:55:36.952241",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.6915,
+      "f1": 0.5414,
+      "r2": 0.6915,
+      "mae": 0.3085,
+      "rmse": 0.4586
+    },
+    "xgboost": {
+      "accuracy": 0.6368,
+      "f1": 0.4815,
+      "r2": 0.6368,
+      "mae": 0.3632,
+      "rmse": 0.5185
+    },
+    "logistic_regression": {
+      "accuracy": 0.5373,
+      "f1": 0.5362,
+      "r2": 0.5373,
+      "mae": 0.4627,
+      "rmse": 0.4638
+    },
+    "ensemble": {
+      "accuracy": 0.6667,
+      "f1": 0.5382,
+      "r2": 0.6667,
+      "mae": 0.3333,
+      "rmse": 0.4618
+    }
+  }
+}

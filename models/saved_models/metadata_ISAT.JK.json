@@ -1,0 +1,35 @@
+{
+  "stock_code": "ISAT.JK",
+  "trained_date": "2026-05-20T06:54:32.662989",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5174,
+      "f1": 0.4464,
+      "r2": 0.5174,
+      "mae": 0.4826,
+      "rmse": 0.5536
+    },
+    "xgboost": {
+      "accuracy": 0.4677,
+      "f1": 0.4076,
+      "r2": 0.4677,
+      "mae": 0.5323,
+      "rmse": 0.5924
+    },
+    "logistic_regression": {
+      "accuracy": 0.5672,
+      "f1": 0.3619,
+      "r2": 0.5672,
+      "mae": 0.4328,
+      "rmse": 0.6381
+    },
+    "ensemble": {
+      "accuracy": 0.5224,
+      "f1": 0.4184,
+      "r2": 0.5224,
+      "mae": 0.4776,
+      "rmse": 0.5816
+    }
+  }
+}

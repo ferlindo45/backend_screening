@@ -1,0 +1,35 @@
+{
+  "stock_code": "AMRT.JK",
+  "trained_date": "2026-05-20T06:52:25.459043",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.3881,
+      "f1": 0.3573,
+      "r2": 0.3881,
+      "mae": 0.6119,
+      "rmse": 0.6427
+    },
+    "xgboost": {
+      "accuracy": 0.4179,
+      "f1": 0.3963,
+      "r2": 0.4179,
+      "mae": 0.5821,
+      "rmse": 0.6037
+    },
+    "logistic_regression": {
+      "accuracy": 0.4279,
+      "f1": 0.4067,
+      "r2": 0.4279,
+      "mae": 0.5721,
+      "rmse": 0.5933
+    },
+    "ensemble": {
+      "accuracy": 0.3881,
+      "f1": 0.3573,
+      "r2": 0.3881,
+      "mae": 0.6119,
+      "rmse": 0.6427
+    }
+  }
+}

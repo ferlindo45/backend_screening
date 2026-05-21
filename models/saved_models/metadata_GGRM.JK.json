@@ -1,0 +1,35 @@
+{
+  "stock_code": "GGRM.JK",
+  "trained_date": "2026-05-20T06:57:25.732711",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5473,
+      "f1": 0.5286,
+      "r2": 0.5473,
+      "mae": 0.4527,
+      "rmse": 0.4714
+    },
+    "xgboost": {
+      "accuracy": 0.5672,
+      "f1": 0.5335,
+      "r2": 0.5672,
+      "mae": 0.4328,
+      "rmse": 0.4665
+    },
+    "logistic_regression": {
+      "accuracy": 0.5522,
+      "f1": 0.5263,
+      "r2": 0.5522,
+      "mae": 0.4478,
+      "rmse": 0.4737
+    },
+    "ensemble": {
+      "accuracy": 0.5622,
+      "f1": 0.5369,
+      "r2": 0.5622,
+      "mae": 0.4378,
+      "rmse": 0.4631
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "stock_code": "ANTM.JK",
+  "trained_date": "2026-05-20T06:52:31.143712",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5373,
+      "f1": 0.3768,
+      "r2": 0.5373,
+      "mae": 0.4627,
+      "rmse": 0.6232
+    },
+    "xgboost": {
+      "accuracy": 0.5224,
+      "f1": 0.3611,
+      "r2": 0.5224,
+      "mae": 0.4776,
+      "rmse": 0.6389
+    },
+    "logistic_regression": {
+      "accuracy": 0.5373,
+      "f1": 0.3495,
+      "r2": 0.5373,
+      "mae": 0.4627,
+      "rmse": 0.6505
+    },
+    "ensemble": {
+      "accuracy": 0.5423,
+      "f1": 0.3705,
+      "r2": 0.5423,
+      "mae": 0.4577,
+      "rmse": 0.6295
+    }
+  }
+}

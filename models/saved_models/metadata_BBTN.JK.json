@@ -1,0 +1,35 @@
+{
+  "stock_code": "BBTN.JK",
+  "trained_date": "2026-05-20T06:53:00.450626",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.607,
+      "f1": 0.4107,
+      "r2": 0.607,
+      "mae": 0.393,
+      "rmse": 0.5893
+    },
+    "xgboost": {
+      "accuracy": 0.5871,
+      "f1": 0.4512,
+      "r2": 0.5871,
+      "mae": 0.4129,
+      "rmse": 0.5488
+    },
+    "logistic_regression": {
+      "accuracy": 0.6318,
+      "f1": 0.4114,
+      "r2": 0.6318,
+      "mae": 0.3682,
+      "rmse": 0.5886
+    },
+    "ensemble": {
+      "accuracy": 0.6119,
+      "f1": 0.4131,
+      "r2": 0.6119,
+      "mae": 0.3881,
+      "rmse": 0.5869
+    }
+  }
+}

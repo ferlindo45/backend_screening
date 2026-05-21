@@ -1,0 +1,35 @@
+{
+  "stock_code": "INDF.JK",
+  "trained_date": "2026-05-20T06:54:21.181831",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.393,
+      "f1": 0.3876,
+      "r2": 0.393,
+      "mae": 0.607,
+      "rmse": 0.6124
+    },
+    "xgboost": {
+      "accuracy": 0.4129,
+      "f1": 0.4126,
+      "r2": 0.4129,
+      "mae": 0.5871,
+      "rmse": 0.5874
+    },
+    "logistic_regression": {
+      "accuracy": 0.602,
+      "f1": 0.5616,
+      "r2": 0.602,
+      "mae": 0.398,
+      "rmse": 0.4384
+    },
+    "ensemble": {
+      "accuracy": 0.4179,
+      "f1": 0.4109,
+      "r2": 0.4179,
+      "mae": 0.5821,
+      "rmse": 0.5891
+    }
+  }
+}

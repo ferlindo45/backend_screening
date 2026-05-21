@@ -1,0 +1,35 @@
+{
+  "stock_code": "SCMA.JK",
+  "trained_date": "2026-05-20T06:55:42.555315",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5522,
+      "f1": 0.449,
+      "r2": 0.5522,
+      "mae": 0.4478,
+      "rmse": 0.551
+    },
+    "xgboost": {
+      "accuracy": 0.4826,
+      "f1": 0.4789,
+      "r2": 0.4826,
+      "mae": 0.5174,
+      "rmse": 0.5211
+    },
+    "logistic_regression": {
+      "accuracy": 0.5522,
+      "f1": 0.4088,
+      "r2": 0.5522,
+      "mae": 0.4478,
+      "rmse": 0.5912
+    },
+    "ensemble": {
+      "accuracy": 0.5572,
+      "f1": 0.458,
+      "r2": 0.5572,
+      "mae": 0.4428,
+      "rmse": 0.542
+    }
+  }
+}

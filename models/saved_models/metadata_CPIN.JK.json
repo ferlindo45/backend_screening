@@ -1,0 +1,35 @@
+{
+  "stock_code": "CPIN.JK",
+  "trained_date": "2026-05-20T06:53:28.340822",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.597,
+      "f1": 0.5951,
+      "r2": 0.597,
+      "mae": 0.403,
+      "rmse": 0.4049
+    },
+    "xgboost": {
+      "accuracy": 0.6766,
+      "f1": 0.6727,
+      "r2": 0.6766,
+      "mae": 0.3234,
+      "rmse": 0.3273
+    },
+    "logistic_regression": {
+      "accuracy": 0.4428,
+      "f1": 0.421,
+      "r2": 0.4428,
+      "mae": 0.5572,
+      "rmse": 0.579
+    },
+    "ensemble": {
+      "accuracy": 0.6169,
+      "f1": 0.6168,
+      "r2": 0.6169,
+      "mae": 0.3831,
+      "rmse": 0.3832
+    }
+  }
+}

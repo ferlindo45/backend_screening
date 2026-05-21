@@ -174,30 +174,31 @@ class SentimentAnalyzer:
         
         return pd.DataFrame(results)
     
-def get_daily_sentiment_score(self, df_sentiment: pd.DataFrame) -> pd.DataFrame:
-    """
-    Aggregate sentiment scores by date
-    
-    Args:
-        df_sentiment: DataFrame with sentiment analysis results
-    
-    Returns:
-        DataFrame with daily aggregated sentiment scores
-    """
-    if df_sentiment.empty:
-        return pd.DataFrame()
-    
-    # Convert date column to datetime (timezone-naive)
-    df_sentiment['date'] = pd.to_datetime(df_sentiment['date']).dt.tz_localize(None)
-    
-    # Aggregate by date
-    daily_sentiment = df_sentiment.groupby('date').agg({
-        'sentiment_score': 'mean',
-        'sentiment_positive': 'mean',
-        'sentiment_neutral': 'mean',
-        'sentiment_negative': 'mean'
-    }).reset_index()
-    
-    return daily_sentiment
+    def get_daily_sentiment_score(self, df_sentiment: pd.DataFrame) -> pd.DataFrame:
+        """
+        Aggregate sentiment scores by date
+        
+        Args:
+            df_sentiment: DataFrame with sentiment analysis results
+        
+        Returns:
+            DataFrame with daily aggregated sentiment scores
+        """
+        if df_sentiment.empty:
+            return pd.DataFrame()
+        
+        # Convert date column to datetime (timezone-naive)
+        df_sentiment['date'] = pd.to_datetime(df_sentiment['date']).dt.tz_localize(None)
+        
+        # Aggregate by date
+        daily_sentiment = df_sentiment.groupby('date').agg({
+            'sentiment_score': 'mean',
+            'sentiment_positive': 'mean',
+            'sentiment_neutral': 'mean',
+            'sentiment_negative': 'mean'
+        }).reset_index()
+        
+        return daily_sentiment
+
 # Global instance
 sentiment_analyzer = SentimentAnalyzer()

@@ -1,0 +1,35 @@
+{
+  "stock_code": "ARTO.JK",
+  "trained_date": "2026-05-20T06:56:26.944519",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5124,
+      "f1": 0.4429,
+      "r2": 0.5124,
+      "mae": 0.4876,
+      "rmse": 0.5571
+    },
+    "xgboost": {
+      "accuracy": 0.5622,
+      "f1": 0.4914,
+      "r2": 0.5622,
+      "mae": 0.4378,
+      "rmse": 0.5086
+    },
+    "logistic_regression": {
+      "accuracy": 0.3483,
+      "f1": 0.3088,
+      "r2": 0.3483,
+      "mae": 0.6517,
+      "rmse": 0.6912
+    },
+    "ensemble": {
+      "accuracy": 0.5075,
+      "f1": 0.4627,
+      "r2": 0.5075,
+      "mae": 0.4925,
+      "rmse": 0.5373
+    }
+  }
+}

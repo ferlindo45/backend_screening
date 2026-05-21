@@ -1,0 +1,35 @@
+{
+  "stock_code": "AADI.JK",
+  "trained_date": "2026-05-20T06:51:57.071921",
+  "samples": 141,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.7586,
+      "f1": 0.4314,
+      "r2": 0.7586,
+      "mae": 0.2414,
+      "rmse": 0.5686
+    },
+    "xgboost": {
+      "accuracy": 0.6897,
+      "f1": 0.6255,
+      "r2": 0.6897,
+      "mae": 0.3103,
+      "rmse": 0.3745
+    },
+    "logistic_regression": {
+      "accuracy": 0.7586,
+      "f1": 0.4314,
+      "r2": 0.7586,
+      "mae": 0.2414,
+      "rmse": 0.5686
+    },
+    "ensemble": {
+      "accuracy": 0.7586,
+      "f1": 0.4314,
+      "r2": 0.7586,
+      "mae": 0.2414,
+      "rmse": 0.5686
+    }
+  }
+}

@@ -4,6 +4,7 @@ Feature engineering service for stock data
 
 import pandas as pd
 import numpy as np
+import os
 from typing import Dict, Optional, Tuple
 from datetime import datetime
 import logging
@@ -11,6 +12,58 @@ import logging
 from config import MA_WINDOWS, VOLATILITY_WINDOW, TARGET_WINDOW, FEATURE_COLUMNS, TARGET_COLUMN
 
 logger = logging.getLogger(__name__)
+
+# --- Mapping pdf_period string → sortable integer rank ---
+_PERIOD_RANK = {
+    'February - July 2026': 50,
+    'February - July 2025': 40,
+    'February - July 2024': 30,
+    '2023': 20,
+    'Unknown': 10
+}
+
+def _load_fundamental_timeline(ticker_clean: str) -> pd.DataFrame:
+    """
+    Load all quarterly fundamental rows for a given ticker from CSV,
+    parse their report_date, sort chronologically, and return a clean
+    DataFrame with column `_ref_date` ready for merge_asof.
+    Returns empty DataFrame if not available.
+    """
+    csv_path = os.path.join('data', 'stock_data', 'lq45_fundamental.csv')
+    if not os.path.exists(csv_path):
+        return pd.DataFrame()
+    try:
+        df = pd.read_csv(csv_path)
+        df['ticker'] = df['ticker'].astype(str)
+        stock_df = df[df['ticker'] == ticker_clean].copy()
+        if stock_df.empty:
+            return pd.DataFrame()
+
+        # Parse report_date  (e.g. "Dec 2023" → datetime)
+        stock_df['_report_dt'] = pd.to_datetime(
+            stock_df['report_date'], format='%b %Y', errors='coerce'
+        )
+        stock_df['_period_rank'] = stock_df['pdf_period'].map(_PERIOD_RANK).fillna(0)
+
+        # Keep only rows with a valid date
+        stock_df = stock_df.dropna(subset=['_report_dt'])
+        if stock_df.empty:
+            return pd.DataFrame()
+
+        # For duplicate dates within same period, keep highest-ranked period
+        stock_df = (
+            stock_df
+            .sort_values(['_report_dt', '_period_rank'], ascending=[True, False])
+            .drop_duplicates(subset=['_report_dt'], keep='first')
+        )
+        stock_df = stock_df.rename(columns={'_report_dt': '_ref_date'})
+        stock_df['dividend'] = pd.to_numeric(
+            stock_df.get('dividend_yield', 0), errors='coerce'
+        ).fillna(0) / 100.0
+        return stock_df[['_ref_date','roe','per','der','eps','dividend']].sort_values('_ref_date').reset_index(drop=True)
+    except Exception as e:
+        logger.warning(f'Could not load fundamental timeline for {ticker_clean}: {e}')
+        return pd.DataFrame()
 
 class FeatureEngineer:
     """Class for creating technical and fundamental features"""
@@ -87,41 +140,74 @@ class FeatureEngineer:
     
     def calculate_target(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Calculate target variable (future return)
-        
-        Args:
-            df: DataFrame with technical features
-        
-        Returns:
-            DataFrame with target column added
+        Calculate target variable as a binary BUY/HOLD signal.
+        1 = Buy  (future_return > +1% over target_window days)
+        0 = Hold/Sell (otherwise)
+        Converting from regression to classification eliminates negative R² problem.
         """
         df = df.copy()
-        
-        # Future return over target_window days
-        df[TARGET_COLUMN] = df['Close'].shift(-self.target_window) / df['Close'] - 1
-        
+        future_return = df['Close'].shift(-self.target_window) / df['Close'] - 1
+        # Binary: 1 if expected gain > 1%, 0 otherwise
+        df[TARGET_COLUMN] = (future_return > 0.01).astype(int)
         return df
     
-    def add_fundamental_features(self, df: pd.DataFrame, fundamental_data: Dict) -> pd.DataFrame:
+    def add_fundamental_features(
+        self,
+        df: pd.DataFrame,
+        fundamental_data: Dict,
+        ticker_clean: str = None
+    ) -> pd.DataFrame:
         """
-        Add fundamental data to the feature set
-        
-        Args:
-            df: DataFrame with technical features
-            fundamental_data: Dictionary of fundamental metrics
-        
-        Returns:
-            DataFrame with fundamental features added
+        Add fundamental data to the feature set.
+        If ticker_clean is supplied, we attempt a time-aware merge:
+        each price row gets the fundamental snapshot from the most recent
+        report_date that is <= that price date (merge_asof).
+        Falls back to constant values if timeline is unavailable.
         """
         df = df.copy()
-        
-        # Add fundamental metrics (constant across time for simplicity)
-        df['roe'] = fundamental_data.get('roe', 0)
-        df['per'] = fundamental_data.get('per', 0)
-        df['der'] = fundamental_data.get('der', 0)
-        df['eps'] = fundamental_data.get('eps', 0)
+
+        # --- Try time-aware merge first ---
+        if ticker_clean:
+            timeline = _load_fundamental_timeline(ticker_clean)
+            if not timeline.empty:
+                # Prepare a date column in df
+                if 'Date' in df.columns:
+                    price_dates = pd.to_datetime(df['Date']).dt.tz_localize(None)
+                else:
+                    price_dates = pd.to_datetime(df.index).tz_localize(None)
+
+                # ── FIX: normalize both sides to the SAME datetime unit ──────
+                # yfinance returns datetime64[s], pd.to_datetime gives datetime64[us]
+                # cast both to microseconds to avoid MergeError
+                df['_price_date'] = price_dates.values.astype('datetime64[us]')
+                timeline = timeline.copy()
+                timeline['_ref_date'] = timeline['_ref_date'].astype('datetime64[us]')
+                # ─────────────────────────────────────────────────────────────
+
+                merged = pd.merge_asof(
+                    df.sort_values('_price_date'),
+                    timeline.rename(columns={'_ref_date': '_price_date'}),
+                    on='_price_date',
+                    direction='backward'
+                )
+                # Fill any rows before the first report with the oldest available
+                for col in ['roe','per','der','eps','dividend']:
+                    if col in merged.columns:
+                        merged[col] = merged[col].fillna(fundamental_data.get(col, 0))
+                    else:
+                        merged[col] = fundamental_data.get(col, 0)
+
+                df = merged.sort_index().drop(columns=['_price_date'], errors='ignore')
+                logger.info(f'Time-aware fundamental merge done for {ticker_clean}: {timeline.shape[0]} snapshots.')
+                return df
+
+        # --- Fallback: constant values (original behaviour) ---
+        logger.warning(f'Using constant fundamentals for {ticker_clean or "unknown"}')
+        df['roe']      = fundamental_data.get('roe', 0)
+        df['per']      = fundamental_data.get('per', 0)
+        df['der']      = fundamental_data.get('der', 0)
+        df['eps']      = fundamental_data.get('eps', 0)
         df['dividend'] = fundamental_data.get('dividend', 0)
-        
         return df
     
     def add_sentiment_features(self, df: pd.DataFrame, sentiment_df: pd.DataFrame) -> pd.DataFrame:
@@ -222,7 +308,8 @@ class FeatureEngineer:
         self,
         stock_data: pd.DataFrame,
         fundamental_data: Dict,
-        sentiment_data: Optional[pd.DataFrame] = None
+        sentiment_data: Optional[pd.DataFrame] = None,
+        ticker_clean: str = None
     ) -> pd.DataFrame:
         """
         Create complete feature dataset for a stock
@@ -247,8 +334,8 @@ class FeatureEngineer:
         # Calculate target
         df = self.calculate_target(df)
         
-        # Add fundamental features
-        df = self.add_fundamental_features(df, fundamental_data)
+        # Add fundamental features (time-aware if ticker_clean supplied)
+        df = self.add_fundamental_features(df, fundamental_data, ticker_clean=ticker_clean)
         
         # Add sentiment features if available
         if sentiment_data is not None and not sentiment_data.empty:

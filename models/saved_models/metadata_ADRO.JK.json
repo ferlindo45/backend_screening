@@ -1,0 +1,35 @@
+{
+  "stock_code": "ADRO.JK",
+  "trained_date": "2026-05-20T06:52:08.774625",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.4279,
+      "f1": 0.4278,
+      "r2": 0.4279,
+      "mae": 0.5721,
+      "rmse": 0.5722
+    },
+    "xgboost": {
+      "accuracy": 0.4328,
+      "f1": 0.4325,
+      "r2": 0.4328,
+      "mae": 0.5672,
+      "rmse": 0.5675
+    },
+    "logistic_regression": {
+      "accuracy": 0.5124,
+      "f1": 0.4336,
+      "r2": 0.5124,
+      "mae": 0.4876,
+      "rmse": 0.5664
+    },
+    "ensemble": {
+      "accuracy": 0.4328,
+      "f1": 0.4321,
+      "r2": 0.4328,
+      "mae": 0.5672,
+      "rmse": 0.5679
+    }
+  }
+}

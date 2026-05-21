@@ -1,0 +1,35 @@
+{
+  "stock_code": "MAPI.JK",
+  "trained_date": "2026-05-20T06:54:56.929921",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5174,
+      "f1": 0.4508,
+      "r2": 0.5174,
+      "mae": 0.4826,
+      "rmse": 0.5492
+    },
+    "xgboost": {
+      "accuracy": 0.5473,
+      "f1": 0.4926,
+      "r2": 0.5473,
+      "mae": 0.4527,
+      "rmse": 0.5074
+    },
+    "logistic_regression": {
+      "accuracy": 0.5473,
+      "f1": 0.3537,
+      "r2": 0.5473,
+      "mae": 0.4527,
+      "rmse": 0.6463
+    },
+    "ensemble": {
+      "accuracy": 0.5274,
+      "f1": 0.4578,
+      "r2": 0.5274,
+      "mae": 0.4726,
+      "rmse": 0.5422
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "stock_code": "INDY.JK",
+  "trained_date": "2026-05-20T06:58:00.388231",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.4478,
+      "f1": 0.3499,
+      "r2": 0.4478,
+      "mae": 0.5522,
+      "rmse": 0.6501
+    },
+    "xgboost": {
+      "accuracy": 0.4776,
+      "f1": 0.3957,
+      "r2": 0.4776,
+      "mae": 0.5224,
+      "rmse": 0.6043
+    },
+    "logistic_regression": {
+      "accuracy": 0.4677,
+      "f1": 0.3842,
+      "r2": 0.4677,
+      "mae": 0.5323,
+      "rmse": 0.6158
+    },
+    "ensemble": {
+      "accuracy": 0.4527,
+      "f1": 0.3586,
+      "r2": 0.4527,
+      "mae": 0.5473,
+      "rmse": 0.6414
+    }
+  }
+}

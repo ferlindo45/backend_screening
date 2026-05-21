@@ -1,0 +1,35 @@
+{
+  "stock_code": "UNVR.JK",
+  "trained_date": "2026-05-20T06:56:10.573247",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.4776,
+      "f1": 0.4487,
+      "r2": 0.4776,
+      "mae": 0.5224,
+      "rmse": 0.5513
+    },
+    "xgboost": {
+      "accuracy": 0.5075,
+      "f1": 0.3971,
+      "r2": 0.5075,
+      "mae": 0.4925,
+      "rmse": 0.6029
+    },
+    "logistic_regression": {
+      "accuracy": 0.5771,
+      "f1": 0.3963,
+      "r2": 0.5771,
+      "mae": 0.4229,
+      "rmse": 0.6037
+    },
+    "ensemble": {
+      "accuracy": 0.5075,
+      "f1": 0.3907,
+      "r2": 0.5075,
+      "mae": 0.4925,
+      "rmse": 0.6093
+    }
+  }
+}

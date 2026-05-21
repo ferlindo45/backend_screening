@@ -1,0 +1,35 @@
+{
+  "stock_code": "SMRA.JK",
+  "trained_date": "2026-05-20T06:57:14.032965",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.6418,
+      "f1": 0.6055,
+      "r2": 0.6418,
+      "mae": 0.3582,
+      "rmse": 0.3945
+    },
+    "xgboost": {
+      "accuracy": 0.6318,
+      "f1": 0.6043,
+      "r2": 0.6318,
+      "mae": 0.3682,
+      "rmse": 0.3957
+    },
+    "logistic_regression": {
+      "accuracy": 0.3234,
+      "f1": 0.2444,
+      "r2": 0.3234,
+      "mae": 0.6766,
+      "rmse": 0.7556
+    },
+    "ensemble": {
+      "accuracy": 0.6368,
+      "f1": 0.6108,
+      "r2": 0.6368,
+      "mae": 0.3632,
+      "rmse": 0.3892
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "stock_code": "JSMR.JK",
+  "trained_date": "2026-05-20T06:56:50.118934",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.4726,
+      "f1": 0.4229,
+      "r2": 0.4726,
+      "mae": 0.5274,
+      "rmse": 0.5771
+    },
+    "xgboost": {
+      "accuracy": 0.4478,
+      "f1": 0.3976,
+      "r2": 0.4478,
+      "mae": 0.5522,
+      "rmse": 0.6024
+    },
+    "logistic_regression": {
+      "accuracy": 0.5224,
+      "f1": 0.4298,
+      "r2": 0.5224,
+      "mae": 0.4776,
+      "rmse": 0.5702
+    },
+    "ensemble": {
+      "accuracy": 0.4876,
+      "f1": 0.4213,
+      "r2": 0.4876,
+      "mae": 0.5124,
+      "rmse": 0.5787
+    }
+  }
+}

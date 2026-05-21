@@ -16,22 +16,15 @@ import matplotlib.patches as mpatches
 from datetime import datetime
 from services.feature_engineering import FeatureEngineer
 from services.ml_model import StockPredictor
+from services.data_collector import DataCollector
 
 warnings.filterwarnings('ignore')
 
-# LQ45 Stock List
-LQ45_STOCKS_FULL = [
-    'AADI.JK', 'ADRO.JK', 'AKRA.JK', 'AMRT.JK', 'ANTM.JK',
-    'ARTO.JK', 'ASII.JK', 'BBCA.JK', 'BBRI.JK', 'BBTN.JK',
-    'BDMN.JK', 'BBNI.JK', 'BMRI.JK', 'BRIS.JK', 'BRPT.JK',
-    'BSDE.JK', 'BUKA.JK', 'BYAN.JK', 'CPIN.JK', 'ERAA.JK',
-    'EXCL.JK', 'GGRM.JK', 'GOTO.JK', 'HRUM.JK', 'ICBP.JK',
-    'INCO.JK', 'INDF.JK', 'INKP.JK', 'INTP.JK', 'ISAT.JK',
-    'ITMG.JK', 'JPFA.JK', 'KLBF.JK', 'MDKA.JK', 'MEDC.JK',
-    'MIKA.JK', 'MNCN.JK', 'PGAS.JK', 'PTBA.JK', 'PTPP.JK',
-    'PWON.JK', 'SMGR.JK', 'SMRA.JK', 'TBIG.JK', 'TINS.JK',
-    'TKIM.JK', 'TLKM.JK', 'TOWR.JK', 'UNTR.JK', 'UNVR.JK'
-]
+# LQ45 Stock List dynamically loaded from config
+from config import LQ45_STOCKS as LQ45_STOCKS_FULL
+
+# DataCollector reused across all stocks (CSV only loaded once per call)
+_data_collector = DataCollector()
 
 # Store all training results for visualization
 training_results_data = []
@@ -55,14 +48,15 @@ def create_accuracy_charts(results_data, output_dir="models/charts"):
     model_names = ['Random Forest', 'XGBoost', 'Linear Regression', 'Ensemble']
     colors = ['#2ecc71', '#3498db', '#e74c3c', '#9b59b6']
     
-    # R2 Distribution
+    # R2 / Accuracy Distribution
     ax1 = axes[0, 0]
-    r2_data = [[r['evaluation'][m]['r2'] for r in results_data if m in r['evaluation']] for m in models]
+    r2_data = [[r['evaluation'][m].get('accuracy', r['evaluation'][m].get('r2', 0)) for r in results_data if m in r['evaluation']] for m in models]
     bp = ax1.boxplot(r2_data, labels=model_names, patch_artist=True)
     for patch, color in zip(bp['boxes'], colors):
         patch.set_facecolor(color); patch.set_alpha(0.7)
-    ax1.axhline(y=0, color='red', linestyle='--')
-    ax1.set_title('Model R² Score Distribution (Higher is Better)')
+    ax1.axhline(y=0.5, color='red', linestyle='--', label='Random baseline')
+    ax1.set_title('Model Accuracy Distribution (Higher is Better)')
+    ax1.set_ylabel('Accuracy')
     ax1.grid(True, alpha=0.3)
     
     # MAE Distribution
@@ -122,19 +116,15 @@ def train_stock(stock_code, engineer, models_dir):
         df.reset_index(inplace=True)
         df['Date'] = pd.to_datetime(df['Date']).dt.tz_localize(None)
         
-        try:
-            info = ticker.info
-            fundamental = {
-                'roe': info.get('returnOnEquity', 0.15) * 100,
-                'per': info.get('trailingPE', 15.0),
-                'der': info.get('debtToEquity', 0.8),
-                'eps': info.get('trailingEps', 500),
-                'dividend': info.get('dividendYield', 0.03)
-            }
-        except:
-            fundamental = {'roe': 15.0, 'per': 12.0, 'der': 0.8, 'eps': 750, 'dividend': 0.035}
+        # --- Use DataCollector (CSV) for fundamentals — FAST & OFFLINE ---
+        ticker_clean = stock_code.replace('.JK', '')
+        fundamental = _data_collector.get_fundamental_data(stock_code)
+        if fundamental.get('is_dummy'):
+            print(f"  [WARN] No CSV fundamental data for {stock_code}, using defaults")
+            fundamental = {'roe': 15.0, 'per': 12.0, 'der': 0.8, 'eps': 750, 'dividend': 0.035, 'is_dummy': False}
         
-        df_complete = engineer.create_complete_dataset(df, fundamental, None)
+        # Pass ticker_clean so feature engineering can do time-aware fundamental merge
+        df_complete = engineer.create_complete_dataset(df, fundamental, None, ticker_clean=ticker_clean)
         if df_complete.empty or len(df_complete) < 50:
             print(f"⚠ Skip {stock_code}: Failed feature engineering")
             return None
@@ -154,14 +144,36 @@ def train_stock(stock_code, engineer, models_dir):
         for name, model in predictor.trained_models.items():
             joblib.dump(model, os.path.join(models_dir, f"{name}_{stock_code}.pkl"))
         
+        ens = results['evaluation']['ensemble']
         metadata = {'stock_code': stock_code, 'trained_date': datetime.now().isoformat(), 'samples': len(X), 'evaluation': results['evaluation']}
         with open(os.path.join(models_dir, f"metadata_{stock_code}.json"), 'w') as f:
             json.dump(metadata, f, indent=2)
             
-        print(f"  ✓ Success: Ensemble R²={results['evaluation']['ensemble']['r2']:.4f}")
+        print(f"  [OK] Success: Accuracy={ens.get('accuracy', ens.get('r2',0)):.4f} | F1={ens.get('f1',0):.4f}")
+        
+        # Save/Update in database MySQL
+        db = None
+        try:
+            from api.database import SessionLocal
+            from services.screening_service import run_screening_and_save
+            import asyncio
+            
+            db = SessionLocal()
+            # Run the async screening pipeline synchronously in this worker thread
+            asyncio.run(run_screening_and_save(stock_code, db))
+            db.close()
+            print(f"  [DB] Successfully compiled and saved screening data to MySQL")
+        except Exception as db_err:
+            if db:
+                db.rollback()
+                db.close()
+            print(f"  [DB ERROR] Failed to save to MySQL database: {db_err}")
+            
         return predictor
     except Exception as e:
-        print(f"  ✗ Error: {str(e)[:50]}")
+        print(f"  [ERROR] Error: {str(e)[:100]}")
+        import traceback
+        traceback.print_exc()
         return None
 
 def main():
@@ -194,5 +206,4 @@ def main():
     print("="*70)
 
 if __name__ == "__main__":
-    if input("\nStart training all LQ45 stocks? (yes/no): ").lower() == 'yes':
-        main()
+    main()

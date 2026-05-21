@@ -1,0 +1,35 @@
+{
+  "stock_code": "ASII.JK",
+  "trained_date": "2026-05-20T06:52:37.118503",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5323,
+      "f1": 0.3658,
+      "r2": 0.5323,
+      "mae": 0.4677,
+      "rmse": 0.6342
+    },
+    "xgboost": {
+      "accuracy": 0.5323,
+      "f1": 0.3744,
+      "r2": 0.5323,
+      "mae": 0.4677,
+      "rmse": 0.6256
+    },
+    "logistic_regression": {
+      "accuracy": 0.5224,
+      "f1": 0.3431,
+      "r2": 0.5224,
+      "mae": 0.4776,
+      "rmse": 0.6569
+    },
+    "ensemble": {
+      "accuracy": 0.5323,
+      "f1": 0.3658,
+      "r2": 0.5323,
+      "mae": 0.4677,
+      "rmse": 0.6342
+    }
+  }
+}

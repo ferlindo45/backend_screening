@@ -8,6 +8,7 @@ PRODUCTION READY - INSTITUTION GRADE
 - Company-specific adjustments
 """
 
+import os
 import yfinance as yf
 import pandas as pd
 import numpy as np
@@ -112,11 +113,12 @@ class FundamentalAnalyzer:
             'margin_max': 100, 'margin_min': -50,
         }
         
-        # Market context
+        # Market context — read from env so admin can update without code change
+        # Update nilai ini di .env: BI_RATE=5.75, INFLATION_RATE=2.5, IHSG_TREND=0.05
         self.market_context = {
-            'ihsg_trend': 0.05,
-            'interest_rate': 5.75,
-            'inflation': 2.5,
+            'ihsg_trend': float(os.environ.get('IHSG_TREND', '0.05')),
+            'interest_rate': float(os.environ.get('BI_RATE', '5.75')),
+            'inflation': float(os.environ.get('INFLATION_RATE', '2.5')),
         }
     
     # ============================================================

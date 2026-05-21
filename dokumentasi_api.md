@@ -1,351 +1,344 @@
-# 📘 Dokumentasi Integrasi API: Stock Screening System LQ45 (Full Data Schema)
+# 📘 Dokumentasi Integrasi API: Stock Screening System LQ45 (v5.1)
 
-Dokumentasi ini berisi rincian **15 Endpoint** lengkap dengan **Struktur JSON Response** untuk mempermudah integrasi Frontend Laravel 13.
+Dokumentasi ini berisi rincian **semua endpoint aktif** di backend Python AI Engine, lengkap dengan **Struktur JSON Response** untuk mempermudah integrasi Frontend Laravel.
+
+> ⚠️ **PENTING:** Semua data screening, fundamental, teknikal, dan sentimen sudah tersimpan di database MySQL Python. Frontend Laravel **tidak** perlu melakukan perhitungan apapun — cukup panggil endpoint lalu tampilkan datanya.
 
 ---
 
 ## 1. Standar Integrasi & Keamanan
 
-- **Base URL:** `http://127.0.0.1:8000`
-- **Header Wajib:** 
-  - `X-API-Key: [API_KEY_ANDA]`
-  - `Accept: application/json`
+| Item | Nilai |
+|---|---|
+| **Base URL** | `http://127.0.0.1:8000` |
+| **Format Response** | JSON |
+| **Auth Publik** | Tidak perlu API Key |
+| **Auth Admin** | Header `X-API-Key: [API_KEY]` |
+| **CORS** | Sudah diaktifkan untuk `localhost:3000` dan `localhost:8000` |
 
 ---
 
-## 2. Katalog Lengkap 15 Endpoint (JSON Schema)
+## 2. Endpoint Publik (Tanpa API Key)
 
-### 🚀 1. Full Comprehensive Analysis
-`GET /analyze/{stock_code}`
-*Laporan lengkap 3 Pilar (Fundamental 50%, Teknikal 30%, Sentimen 20%).*
+### 🏠 2.1 Health Check
+`GET /`
+
+Gunakan endpoint ini untuk mengecek apakah Python Engine sedang online atau offline.
 
 **Response JSON:**
 ```json
 {
-  "stock_code": "BBRI.JK",
-  "company_name": "Bank Rakyat Indonesia",
-  "current_price": 4500.0,
-  "recommendation": "STRONG BUY",
-  "final_score": 82.5,
-  "fundamental": {
-    "score": 85.0,
-    "status": "Positive",
-    "details": {
-      "fair_value": 5200.0,
-      "upside": 15.5,
-      "per": 12.5,
-      "pbv": 2.1,
-      "roe": 18.2,
-      "der": 0.8,
-      "industry_benchmarking": { "status": "BETTER", "sector_avg_roe": 14.5 }
-    },
-    "rationale": "..."
-  },
-  "technical": {
-    "score": 70.0,
-    "status": "Positive",
-    "details": {
-      "rsi": 45.2,
-      "macd": "Bullish",
-      "trend": "Bullish",
-      "support": 4300.0,
-      "resistance": 4700.0,
-      "risk": { "volatility_annual": 25.4, "risk_level": "Low" }
-    },
-    "rationale": "..."
-  },
-  "sentiment": {
-    "score": 90.0,
-    "status": "Positive",
-    "details": { "news_count": 12, "top_headlines": ["...", "..."] },
-    "rationale": "..."
-  },
-  "summary_rationale": "...",
-  "last_updated": "2024-05-15T22:30:00"
+  "status": "healthy",
+  "timestamp": "2026-05-20T06:00:00",
+  "database": "connected",
+  "trained_models_count": 63,
+  "version": "4.0.0"
 }
 ```
 
----
-
-### 📊 2. Batch Predict (Dashboard Overview)
-`GET /batch-predict?stock_codes=BBRI.JK,TLKM.JK`
-*Analisis massal untuk dashboard utama.*
-
-**Response JSON:**
-```json
-{
-  "timestamp": "2024-05-15T22:30:00",
-  "total_stocks_analyzed": 2,
-  "results": [
-    {
-      "stock_code": "BBRI.JK",
-      "predicted_return": 0.015,
-      "sentiment_score": 0.75,
-      "sentiment_label": "Positive",
-      "news_analyzed": 10,
-      "final_score": 82.5,
-      "recommendation": "STRONG BUY",
-      "is_dummy_data": false
-    }
-  ]
-}
-```
+**Cara pakai di Laravel:** Panggil setiap 60 detik via Alpine.js untuk menampilkan indikator "Engine Online/Offline" di header.
 
 ---
 
-### 📈 3. Deep Fundamental Analysis
-`GET /fundamental-analysis/{stock_code}`
-*Detail metrik keuangan mendalam.*
+### 🚀 2.2 Realtime Stock Prices (Landing Page)
+`GET /public/realtime`
 
-**Response JSON:**
-```json
-{
-  "stock_code": "BBRI.JK",
-  "current_price": 4500.0,
-  "eps_ttm": 450.0,
-  "per_ttm": 10.0,
-  "roe": 18.2,
-  "pbv": 2.1,
-  "fair_value": 5200.0,
-  "upside_potential": 15.5,
-  "margin_of_safety": { "percentage": 15.5, "level": "Safe", "action": "Buy" },
-  "fundamental_recommendation": { "score": 85, "label": "Positive" },
-  "sector": "Financial",
-  "last_updated": "..."
-}
-```
+Mengambil harga saham terkini dari Yahoo Finance (auto-cache 5 menit). Cocok untuk landing page marquee/ticker.
 
----
-
-### 💎 4. Fair Value & Valuation Details
-`GET /fair-value/{stock_code}`
-*Perbandingan berbagai metode perhitungan harga wajar.*
-
-**Response JSON:**
-```json
-{
-  "stock_code": "BBRI.JK",
-  "current_price": 4500.0,
-  "fair_value": 5200.0,
-  "fair_value_dcf": 5300.0,
-  "fair_value_per": 5100.0,
-  "fair_value_pbv": 4900.0,
-  "fair_value_ddm": 5050.0,
-  "valuation_method_weights": { "dcf": 50, "per": 30, "pbv": 20 },
-  "margin_of_safety": { "percentage": 15.5, "level": "High" },
-  "dcf_valid": true,
-  "last_updated": "..."
-}
-```
-
----
-
-### 📰 5. Stock News Feed
-`GET /stock-news/{stock_code}`
-*Daftar berita beserta analisis sentimen per artikel.*
-
-**Response JSON:**
-```json
-{
-  "stock_code": "BBRI.JK",
-  "company_name": "Bank Rakyat Indonesia",
-  "overall_sentiment_score": 0.75,
-  "news_analyzed": 15,
-  "news_items": [
-    {
-      "title": "BBRI Cetak Laba Rekor",
-      "date": "2024-05-15",
-      "source": "CNBC",
-      "url": "http://...",
-      "sentiment_score": 0.9,
-      "sentiment_label": "Positive"
-    }
-  ]
-}
-```
-
----
-
-### 🔍 6. Quick Stock Info
-`GET /stock-info/{stock_code}`
-*Data ringkas untuk sidebar atau tooltip.*
-
-**Response JSON:**
-```json
-{
-  "stock_code": "BBRI.JK",
-  "company_name": "Bank Rakyat Indonesia",
-  "current_price": 4500.0,
-  "daily_change_percent": 1.25,
-  "volatility_annual": 25.4,
-  "sentiment_score": 0.75,
-  "latest_news": [ { "title": "...", "sentiment": "Positive" } ],
-  "fundamental_metrics": { "roe": 18.2, "per": 10.0, "der": 0.8 },
-  "last_updated": "..."
-}
-```
-
----
-
-### 📢 7. Quick Sentiment Score
-`GET /stock-sentiment/{stock_code}`
-*Hanya skor sentimen dan jumlah berita.*
-
-**Response JSON:**
-```json
-{
-  "stock_code": "BBRI.JK",
-  "company_name": "Bank Rakyat Indonesia",
-  "sentiment_score": 0.75,
-  "sentiment_label": "Positive",
-  "news_analyzed": 12,
-  "last_updated": "..."
-}
-```
-
----
-
-### 🤖 8. ML Return Prediction
-`POST /predict` (Body: `{"stock_code": "BBRI.JK"}`)
-*Prediksi return spesifik menggunakan model AI.*
-
-**Response JSON:**
-```json
-{
-  "stock_code": "BBRI.JK",
-  "predictions": { "ensemble": 0.015, "random_forest": 0.014 },
-  "sentiment_score": 0.75,
-  "final_score": 82.5,
-  "recommendation": "STRONG BUY"
-}
-```
-
----
-
-### 🎓 9. Train Model Pipeline
-`POST /train-model` (Body: `{"stock_code": "BBRI.JK"}`)
-*Melatih ulang model AI untuk saham tertentu.*
-
-**Response JSON:**
-```json
-{
-  "stock_code": "BBRI.JK",
-  "evaluation": {
-    "random_forest": { "mae": 0.001, "rmse": 0.002, "r2": 0.85 },
-    "ensemble": { "mae": 0.001, "r2": 0.87 }
-  },
-  "feature_importance": { "ma20": 0.15, "rsi": 0.12, "sentiment": 0.1 },
-  "train_size": 450,
-  "message": "Model training completed successfully"
-}
-```
-
----
-
-### ✍️ 10. Manual Sentiment Analysis
-`POST /sentiment` (Body: `{"text": "Harga saham BBCA diprediksi naik..."}`)
-*Analisis sentimen teks bebas.*
-
-**Response JSON:**
-```json
-{
-  "text": "Harga saham BBCA diprediksi naik...",
-  "sentiment": { "positive": 0.85, "neutral": 0.1, "negative": 0.05 },
-  "sentiment_score": 0.8
-}
-```
-
----
-
-### 🗄️ 11. Historical Stock Data
-`GET /get-stock-data?stock_codes=BBRI.JK`
-*Mengambil data historis OHLCV.*
-
-**Response JSON:**
+**Response JSON (Array):**
 ```json
 [
   {
     "stock_code": "BBRI.JK",
-    "total_records": 100,
-    "data": [
-      { "Date": "2024-05-15", "Open": 4450, "High": 4550, "Low": 4400, "Close": 4500, "Volume": 1000000 }
-    ]
+    "company_name": "Bank Rakyat Indonesia",
+    "current_price": 4500.00,
+    "prev_close": 4450.00,
+    "daily_change": 50.00,
+    "daily_change_pct": 1.12,
+    "volume": 125000000.0,
+    "last_updated": "2026-05-20T15:30:00"
   }
 ]
 ```
 
 ---
 
-### 📈 12. System Metrics
-`GET /metrics`
-*Monitoring performa server.*
+### 📊 2.3 Screening Leaderboard (Tabel Utama)
+`GET /public/screening`
 
-**Response JSON:**
+Daftar seluruh saham yang sudah di-training AI, **diurutkan dari skor tertinggi**. Ini adalah endpoint utama untuk halaman Screening.
+
+**Response JSON (Array):**
 ```json
-{
-  "models_loaded": 45,
-  "sentiment_cache_size": 120,
-  "price_cache_size": 45,
-  "cpu_percent": 12.5,
-  "memory_percent": 65.4,
-  "memory_used_mb": 1200.5,
-  "python_version": "3.10.x"
-}
+[
+  {
+    "stock_code": "BBRI.JK",
+    "company_name": "Bank Rakyat Indonesia",
+    "current_price": 4500.00,
+    "fair_value": 5200.00,
+    "upside_potential": 15.55,
+    "margin_of_safety": {
+      "percentage": 15.55,
+      "level": "Safe",
+      "action": "Buy"
+    },
+    "recommendation": "STRONG BUY",
+    "final_score": 82.5,
+    "fundamental_score": 85.0,
+    "technical_score": 75.0,
+    "sentiment_score": 80.0,
+    "sentiment_label": "Positive",
+    "news_analyzed": 10,
+    "quality_passed": true,
+    "raw_metrics": {
+      "roe": 15.50,
+      "per": 12.30,
+      "rsi": 45.50
+    },
+    "summary_rationale": "Rekomendasi STRONG BUY (Score: 82.5). Fundamental: Positive, Teknikal: Positive, Sentimen: Positive.",
+    "last_updated": "2026-05-20T15:30:00"
+  }
+]
 ```
+
+**Catatan untuk Laravel:** Field `raw_metrics` berisi ringkasan ROE, PER, dan RSI untuk ditampilkan langsung di tabel list tanpa perlu membuka halaman detail.
 
 ---
 
-### 🧹 13. Admin: Clear Cache
-`POST /admin/clear-cache`
-*Membersihkan memori cache.*
+### 📈 2.4 Detail Analisis Saham (Halaman Detail)
+`GET /public/analyze/{stock_code}`
 
-**Response JSON:**
-```json
-{
-  "status": "success",
-  "message": "All caches cleared"
-}
-```
+**Endpoint terpenting.** Mengembalikan laporan lengkap 3 Pilar (Fundamental, Teknikal, Sentimen) beserta seluruh angka perhitungan mentahnya. Satu panggilan ini sudah cukup untuk merender seluruh halaman detail saham.
 
----
-
-### 🛠️ 14. Debug: Feature Extraction
-`GET /debug/features/{stock_code}`
-*Troubleshooting tahapan ekstraksi data AI.*
+> Parameter `{stock_code}` menerima format `BBRI.JK` atau `BBRI` (otomatis ditambahkan `.JK`).
 
 **Response JSON:**
 ```json
 {
   "stock_code": "BBRI.JK",
-  "steps": {
-    "1_download": { "status": "OK", "rows": 125 },
-    "2_reset_index": { "status": "OK" },
-    "3_fundamental": { "status": "OK", "roe": 18.2 },
-    "4_sentiment_df": { "status": "OK" },
-    "5_complete_dataset": { "status": "OK" }
+  "company_name": "Bank Rakyat Indonesia",
+  "current_price": 4500.00,
+  "recommendation": "STRONG BUY",
+  "final_score": 82.5,
+
+  "fundamental": {
+    "score": 85.0,
+    "status": "Safe",
+    "raw_metrics": {
+      "roe": 15.50,
+      "per": 12.30,
+      "der": 1.20,
+      "eps": 350.50,
+      "dividend_yield": 0.0450
+    },
+    "details": {
+      "fair_value": 5200.00,
+      "upside": 15.55,
+      "valuation_status": "Undervalued",
+      "valuation_methods_used": ["PER", "PBV"],
+      "valuation_method_weights": {"PER": 0.6, "PBV": 0.4},
+      "quality_passed": true,
+      "quality_reasons": []
+    },
+    "rationale": "Saham Bank Rakyat Indonesia memiliki status valuasi Undervalued dengan Upside Potential 15.55%. Hasil pemeriksaan kualitas fundamental: LULUS."
   },
-  "success": true,
-  "latest_features_shape": [1, 24]
+
+  "technical": {
+    "score": 75.0,
+    "status": "Positive",
+    "raw_indicators": {
+      "rsi": 45.50,
+      "macd": 1.2500,
+      "ma20": 4450.00,
+      "ma50": 4300.00
+    },
+    "details": {
+      "prediction_trend": "Bullish"
+    },
+    "rationale": "Skor teknikal terprediksi AI adalah 75.0/100. Tren indikasi teknikal jangka menengah menunjukkan sinyal hibrida."
+  },
+
+> **📌 Catatan `technical.score` untuk Developer:**
+> Nilai ini adalah **probabilitas BUY** dari ML Classifier (Random Forest + XGBoost + Logistic Regression ensemble), bukan angka abstrak.
+> - Score **≥ 70** → Classifier dominan prediksi BUY → tampilkan badge `Bullish` (hijau)
+> - Score **40–69** → Sinyal campuran → tampilkan badge `Neutral` (kuning)
+> - Score **< 40** → Classifier dominan prediksi HOLD/SELL → tampilkan badge `Bearish` (merah)
+> 
+> Model dilatih dengan 22 fitur: return, MA5/20/50, RSI, MACD, Bollinger Bands, volume_ratio, OBV, ATR, golden_cross, sentiment_score, ROE, PER, DER, EPS, dividend.
+
+  "sentiment": {
+    "score": 80.0,
+    "status": "Positive",
+    "details": {
+      "news_analyzed": 10,
+      "top_headlines": [
+        "BBRI Cetak Laba Rekor Sepanjang Masa",
+        "Dividen Jumbo BBRI Siap Dibagikan",
+        "Analis: BBRI Masih Undervalued"
+      ]
+    },
+    "rationale": "Sentimen pasar berlabel Positive berdasarkan analisis 10 artikel berita terbaru."
+  },
+
+  "summary_rationale": "Rekomendasi STRONG BUY (Score: 82.5). Fundamental: Positive, Teknikal: Positive, Sentimen: Positive. Faktor pendorong utama adalah valuasi harga wajar Rp5200.",
+  "last_updated": "2026-05-20T15:30:00"
 }
 ```
 
+### Peta Penggunaan Data di Halaman Detail
+
+| Data JSON | Digunakan Untuk |
+|---|---|
+| `fundamental.score` | Gauge chart skor fundamental |
+| `fundamental.raw_metrics.*` | Tabel ROE, PER, DER, EPS, Dividend Yield |
+| `fundamental.details.fair_value` | Kartu Harga Wajar |
+| `fundamental.details.upside` | Badge Upside Potential |
+| `fundamental.details.valuation_status` | Badge Undervalued/Overvalued |
+| `fundamental.details.quality_passed` | Indikator kualitas (hijau/merah) |
+| `technical.score` | Gauge chart skor teknikal |
+| `technical.raw_indicators.*` | Tabel RSI, MACD, MA20, MA50 |
+| `technical.details.prediction_trend` | Badge Bullish/Bearish |
+| `sentiment.score` | Gauge chart skor sentimen |
+| `sentiment.details.news_analyzed` | Jumlah berita dianalisis |
+| `sentiment.details.top_headlines` | Daftar judul berita |
+| `sentiment.status` | Label Positive/Negative/Neutral |
+| `summary_rationale` | Paragraf narasi AI |
+
 ---
 
-### 🩺 15. Health Check
-`GET /`
-*Cek status ketersediaan server.*
+## 3. Endpoint Admin (Wajib Header `X-API-Key`)
+
+### ⚙️ 3.1 System Status
+`GET /admin/status`
+
+Statistik sistem: berapa saham terdaftar, berapa yang sudah di-training.
 
 **Response JSON:**
 ```json
 {
-  "status": "healthy",
-  "timestamp": "2024-05-15T22:30:00",
-  "available_models": ["BBRI.JK", "TLKM.JK", "..."],
-  "models_loaded": true,
-  "cache_size": 120,
-  "system_stats": { "models_total": 45, "sentiment_cache": 120 }
+  "timestamp": "2026-05-20T15:30:00",
+  "total_lq45_configured": 63,
+  "trained_stocks_in_db": 63,
+  "trained_stocks_list": ["AADI.JK", "ADRO.JK", "BBRI.JK", "..."],
+  "model_files_on_disk": 189,
+  "database_status": "connected"
 }
 ```
 
 ---
-**Dokumentasi Versi 4.2** | *Complete 15 Endpoints with Full Schemas*
+
+### 🤖 3.2 Trigger Training
+`POST /admin/train?stock_code=ALL`
+
+Memulai proses training AI untuk semua saham di background. Kirim `stock_code=BBRI.JK` untuk training individual.
+
+**Response JSON:**
+```json
+{
+  "status": "started",
+  "message": "Training massal untuk semua (63) saham LQ45 telah dimulai di background."
+}
+```
+
+**Error jika training sudah berjalan (HTTP 400):**
+```json
+{
+  "detail": "Ada proses training yang sedang berjalan. Mohon tunggu."
+}
+```
+
+---
+
+### ⏳ 3.3 Training Progress (Polling)
+`GET /admin/training-status`
+
+Polling endpoint ini setiap 2-3 detik untuk menampilkan progress bar di dashboard admin.
+
+**Response JSON (saat running):**
+```json
+{
+  "status": "running",
+  "progress": 15,
+  "total": 63,
+  "current_stock": "BBRI.JK",
+  "logs": [
+    "Memulai training untuk 63 saham...",
+    "[1/63] Memulai training saham AADI.JK...",
+    "✓ Saham AADI.JK sukses dilatih dan disimpan ke DB.",
+    "[15/63] Memulai training saham BBRI.JK..."
+  ]
+}
+```
+
+**Response JSON (saat idle / selesai):**
+```json
+{
+  "status": "idle",
+  "progress": 0,
+  "total": 0,
+  "current_stock": "",
+  "logs": ["Proses training massal selesai!"]
+}
+```
+
+**Cara menghitung persentase di Laravel:**
+```javascript
+let percentage = Math.round((data.progress / data.total) * 100);
+```
+
+---
+
+## 4. Tabel Database Python (Referensi)
+
+Tabel-tabel berikut ada di **database MySQL Python** (`python_api_db`). Laravel **tidak** perlu membuat migrasi untuk tabel-tabel ini, tapi perlu tahu strukturnya untuk memahami data yang dikembalikan API.
+
+### 4.1 `screenings` — Hasil Screening AI
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| stock_code | VARCHAR(20) PK | Kode saham (misal: BBRI.JK) |
+| company_name | VARCHAR(100) | Nama perusahaan |
+| current_price | FLOAT | Harga terakhir |
+| fair_value | FLOAT | Harga wajar hasil kalkulasi |
+| upside_potential | FLOAT | Persentase potensi kenaikan |
+| mos_percentage | FLOAT | Margin of Safety (%) |
+| mos_level | VARCHAR(50) | Level keamanan (Safe/Risky) |
+| mos_action | VARCHAR(100) | Aksi rekomendasi (Buy/Hold/Sell) |
+| valuation_status | VARCHAR(50) | Status valuasi (Undervalued/Overvalued) |
+| recommendation | VARCHAR(50) | Rekomendasi akhir (STRONG BUY, dll) |
+| final_score | FLOAT | Skor akhir gabungan (0-100) |
+| fundamental_score | FLOAT | Skor fundamental (0-100) |
+| technical_score | FLOAT | Skor teknikal (0-100) |
+| sentiment_score | FLOAT | Skor sentimen (0-100) |
+| fund_roe, fund_per, fund_der, fund_eps, fund_dividend | FLOAT | Data fundamental mentah dari CSV |
+| tech_rsi, tech_macd, tech_ma20, tech_ma50 | FLOAT | Indikator teknikal mentah |
+| is_trained | BOOLEAN | Apakah model sudah dilatih |
+| last_updated | DATETIME | Terakhir diperbarui |
+
+### 4.2 `news_sentiments` — Berita & Pelabelan Sentimen
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| id | INT PK | Auto increment |
+| stock_code | VARCHAR(20) | Kode saham |
+| title | VARCHAR(255) | Judul berita |
+| date | VARCHAR(100) | Tanggal berita |
+| source | VARCHAR(100) | Sumber berita |
+| url | TEXT | Link ke berita asli |
+| description | TEXT | Cuplikan isi berita |
+| sentiment_score | FLOAT | Skor sentimen (0.0 - 1.0) |
+| sentiment_label | VARCHAR(50) | Label: Positive / Negative / Neutral |
+
+### 4.3 `stock_prices_realtime` — Cache Harga Real-time
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| stock_code | VARCHAR(20) PK | Kode saham |
+| company_name | VARCHAR(100) | Nama perusahaan |
+| current_price | FLOAT | Harga terakhir |
+| prev_close | FLOAT | Harga penutupan sebelumnya |
+| daily_change | FLOAT | Perubahan harga (Rp) |
+| daily_change_pct | FLOAT | Perubahan harga (%) |
+| volume | FLOAT | Volume transaksi |
+| last_updated | DATETIME | Terakhir diperbarui |
+
+---
+
+**Dokumentasi Versi 5.1** | *Diperbarui: 20 Mei 2026*

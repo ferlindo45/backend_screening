@@ -1,0 +1,35 @@
+{
+  "stock_code": "SRTG.JK",
+  "trained_date": "2026-05-20T06:57:54.663078",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.408,
+      "f1": 0.4042,
+      "r2": 0.408,
+      "mae": 0.592,
+      "rmse": 0.5958
+    },
+    "xgboost": {
+      "accuracy": 0.5373,
+      "f1": 0.5093,
+      "r2": 0.5373,
+      "mae": 0.4627,
+      "rmse": 0.4907
+    },
+    "logistic_regression": {
+      "accuracy": 0.5572,
+      "f1": 0.5485,
+      "r2": 0.5572,
+      "mae": 0.4428,
+      "rmse": 0.4515
+    },
+    "ensemble": {
+      "accuracy": 0.5224,
+      "f1": 0.5122,
+      "r2": 0.5224,
+      "mae": 0.4776,
+      "rmse": 0.4878
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "stock_code": "BUMI.JK",
+  "trained_date": "2026-05-20T06:53:22.987841",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5622,
+      "f1": 0.4722,
+      "r2": 0.5622,
+      "mae": 0.4378,
+      "rmse": 0.5278
+    },
+    "xgboost": {
+      "accuracy": 0.5274,
+      "f1": 0.4485,
+      "r2": 0.5274,
+      "mae": 0.4726,
+      "rmse": 0.5515
+    },
+    "logistic_regression": {
+      "accuracy": 0.6269,
+      "f1": 0.593,
+      "r2": 0.6269,
+      "mae": 0.3731,
+      "rmse": 0.407
+    },
+    "ensemble": {
+      "accuracy": 0.5572,
+      "f1": 0.4635,
+      "r2": 0.5572,
+      "mae": 0.4428,
+      "rmse": 0.5365
+    }
+  }
+}

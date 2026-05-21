@@ -1,0 +1,35 @@
+{
+  "stock_code": "HEAL.JK",
+  "trained_date": "2026-05-20T06:54:03.021664",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.6169,
+      "f1": 0.4769,
+      "r2": 0.6169,
+      "mae": 0.3831,
+      "rmse": 0.5231
+    },
+    "xgboost": {
+      "accuracy": 0.6617,
+      "f1": 0.4883,
+      "r2": 0.6617,
+      "mae": 0.3383,
+      "rmse": 0.5117
+    },
+    "logistic_regression": {
+      "accuracy": 0.7363,
+      "f1": 0.4241,
+      "r2": 0.7363,
+      "mae": 0.2637,
+      "rmse": 0.5759
+    },
+    "ensemble": {
+      "accuracy": 0.6716,
+      "f1": 0.4751,
+      "r2": 0.6716,
+      "mae": 0.3284,
+      "rmse": 0.5249
+    }
+  }
+}

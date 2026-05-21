@@ -1,0 +1,35 @@
+{
+  "stock_code": "MTEL.JK",
+  "trained_date": "2026-05-20T06:57:42.709131",
+  "samples": 876,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.4489,
+      "f1": 0.4488,
+      "r2": 0.4489,
+      "mae": 0.5511,
+      "rmse": 0.5512
+    },
+    "xgboost": {
+      "accuracy": 0.3693,
+      "f1": 0.3688,
+      "r2": 0.3693,
+      "mae": 0.6307,
+      "rmse": 0.6312
+    },
+    "logistic_regression": {
+      "accuracy": 0.4375,
+      "f1": 0.4309,
+      "r2": 0.4375,
+      "mae": 0.5625,
+      "rmse": 0.5691
+    },
+    "ensemble": {
+      "accuracy": 0.4375,
+      "f1": 0.4373,
+      "r2": 0.4375,
+      "mae": 0.5625,
+      "rmse": 0.5627
+    }
+  }
+}

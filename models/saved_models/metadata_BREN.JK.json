@@ -1,0 +1,35 @@
+{
+  "stock_code": "BREN.JK",
+  "trained_date": "2026-05-20T06:53:11.389775",
+  "samples": 420,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.2738,
+      "f1": 0.2729,
+      "r2": 0.2738,
+      "mae": 0.7262,
+      "rmse": 0.7271
+    },
+    "xgboost": {
+      "accuracy": 0.2143,
+      "f1": 0.2138,
+      "r2": 0.2143,
+      "mae": 0.7857,
+      "rmse": 0.7862
+    },
+    "logistic_regression": {
+      "accuracy": 0.5595,
+      "f1": 0.5088,
+      "r2": 0.5595,
+      "mae": 0.4405,
+      "rmse": 0.4912
+    },
+    "ensemble": {
+      "accuracy": 0.2976,
+      "f1": 0.2951,
+      "r2": 0.2976,
+      "mae": 0.7024,
+      "rmse": 0.7049
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "stock_code": "ESSA.JK",
+  "trained_date": "2026-05-20T06:56:42.125681",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.6169,
+      "f1": 0.549,
+      "r2": 0.6169,
+      "mae": 0.3831,
+      "rmse": 0.451
+    },
+    "xgboost": {
+      "accuracy": 0.5821,
+      "f1": 0.5397,
+      "r2": 0.5821,
+      "mae": 0.4179,
+      "rmse": 0.4603
+    },
+    "logistic_regression": {
+      "accuracy": 0.5124,
+      "f1": 0.4515,
+      "r2": 0.5124,
+      "mae": 0.4876,
+      "rmse": 0.5485
+    },
+    "ensemble": {
+      "accuracy": 0.592,
+      "f1": 0.5564,
+      "r2": 0.592,
+      "mae": 0.408,
+      "rmse": 0.4436
+    }
+  }
+}

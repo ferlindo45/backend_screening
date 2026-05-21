@@ -1,0 +1,35 @@
+{
+  "stock_code": "BBRI.JK",
+  "trained_date": "2026-05-20T06:52:54.840196",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5672,
+      "f1": 0.5656,
+      "r2": 0.5672,
+      "mae": 0.4328,
+      "rmse": 0.4344
+    },
+    "xgboost": {
+      "accuracy": 0.4975,
+      "f1": 0.4671,
+      "r2": 0.4975,
+      "mae": 0.5025,
+      "rmse": 0.5329
+    },
+    "logistic_regression": {
+      "accuracy": 0.597,
+      "f1": 0.4247,
+      "r2": 0.597,
+      "mae": 0.403,
+      "rmse": 0.5753
+    },
+    "ensemble": {
+      "accuracy": 0.5323,
+      "f1": 0.4945,
+      "r2": 0.5323,
+      "mae": 0.4677,
+      "rmse": 0.5055
+    }
+  }
+}

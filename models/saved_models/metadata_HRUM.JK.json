@@ -1,0 +1,35 @@
+{
+  "stock_code": "HRUM.JK",
+  "trained_date": "2026-05-20T06:57:31.336796",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5473,
+      "f1": 0.4515,
+      "r2": 0.5473,
+      "mae": 0.4527,
+      "rmse": 0.5485
+    },
+    "xgboost": {
+      "accuracy": 0.5871,
+      "f1": 0.4512,
+      "r2": 0.5871,
+      "mae": 0.4129,
+      "rmse": 0.5488
+    },
+    "logistic_regression": {
+      "accuracy": 0.597,
+      "f1": 0.5912,
+      "r2": 0.597,
+      "mae": 0.403,
+      "rmse": 0.4088
+    },
+    "ensemble": {
+      "accuracy": 0.5572,
+      "f1": 0.458,
+      "r2": 0.5572,
+      "mae": 0.4428,
+      "rmse": 0.542
+    }
+  }
+}

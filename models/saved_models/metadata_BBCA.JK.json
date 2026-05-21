@@ -1,0 +1,35 @@
+{
+  "stock_code": "BBCA.JK",
+  "trained_date": "2026-05-20T06:52:43.093746",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.3035,
+      "f1": 0.2907,
+      "r2": 0.3035,
+      "mae": 0.6965,
+      "rmse": 0.7093
+    },
+    "xgboost": {
+      "accuracy": 0.4229,
+      "f1": 0.4205,
+      "r2": 0.4229,
+      "mae": 0.5771,
+      "rmse": 0.5795
+    },
+    "logistic_regression": {
+      "accuracy": 0.398,
+      "f1": 0.3975,
+      "r2": 0.398,
+      "mae": 0.602,
+      "rmse": 0.6025
+    },
+    "ensemble": {
+      "accuracy": 0.3284,
+      "f1": 0.3229,
+      "r2": 0.3284,
+      "mae": 0.6716,
+      "rmse": 0.6771
+    }
+  }
+}

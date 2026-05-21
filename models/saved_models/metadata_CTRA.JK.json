@@ -1,0 +1,35 @@
+{
+  "stock_code": "CTRA.JK",
+  "trained_date": "2026-05-20T06:53:33.984844",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5473,
+      "f1": 0.5456,
+      "r2": 0.5473,
+      "mae": 0.4527,
+      "rmse": 0.4544
+    },
+    "xgboost": {
+      "accuracy": 0.5522,
+      "f1": 0.5497,
+      "r2": 0.5522,
+      "mae": 0.4478,
+      "rmse": 0.4503
+    },
+    "logistic_regression": {
+      "accuracy": 0.6567,
+      "f1": 0.5959,
+      "r2": 0.6567,
+      "mae": 0.3433,
+      "rmse": 0.4041
+    },
+    "ensemble": {
+      "accuracy": 0.5721,
+      "f1": 0.5683,
+      "r2": 0.5721,
+      "mae": 0.4279,
+      "rmse": 0.4317
+    }
+  }
+}

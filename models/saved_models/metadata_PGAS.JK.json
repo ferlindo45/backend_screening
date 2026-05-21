@@ -1,0 +1,35 @@
+{
+  "stock_code": "PGAS.JK",
+  "trained_date": "2026-05-20T06:55:25.646367",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5274,
+      "f1": 0.3546,
+      "r2": 0.5274,
+      "mae": 0.4726,
+      "rmse": 0.6454
+    },
+    "xgboost": {
+      "accuracy": 0.5124,
+      "f1": 0.3796,
+      "r2": 0.5124,
+      "mae": 0.4876,
+      "rmse": 0.6204
+    },
+    "logistic_regression": {
+      "accuracy": 0.4975,
+      "f1": 0.3643,
+      "r2": 0.4975,
+      "mae": 0.5025,
+      "rmse": 0.6357
+    },
+    "ensemble": {
+      "accuracy": 0.5274,
+      "f1": 0.3546,
+      "r2": 0.5274,
+      "mae": 0.4726,
+      "rmse": 0.6454
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "stock_code": "INKP.JK",
+  "trained_date": "2026-05-20T06:54:26.876867",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.6567,
+      "f1": 0.636,
+      "r2": 0.6567,
+      "mae": 0.3433,
+      "rmse": 0.364
+    },
+    "xgboost": {
+      "accuracy": 0.6915,
+      "f1": 0.6646,
+      "r2": 0.6915,
+      "mae": 0.3085,
+      "rmse": 0.3354
+    },
+    "logistic_regression": {
+      "accuracy": 0.5224,
+      "f1": 0.4627,
+      "r2": 0.5224,
+      "mae": 0.4776,
+      "rmse": 0.5373
+    },
+    "ensemble": {
+      "accuracy": 0.6468,
+      "f1": 0.6011,
+      "r2": 0.6468,
+      "mae": 0.3532,
+      "rmse": 0.3989
+    }
+  }
+}

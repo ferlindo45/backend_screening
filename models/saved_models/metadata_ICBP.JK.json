@@ -1,0 +1,35 @@
+{
+  "stock_code": "ICBP.JK",
+  "trained_date": "2026-05-20T06:54:08.939481",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.3632,
+      "f1": 0.3515,
+      "r2": 0.3632,
+      "mae": 0.6368,
+      "rmse": 0.6485
+    },
+    "xgboost": {
+      "accuracy": 0.5423,
+      "f1": 0.5224,
+      "r2": 0.5423,
+      "mae": 0.4577,
+      "rmse": 0.4776
+    },
+    "logistic_regression": {
+      "accuracy": 0.2786,
+      "f1": 0.231,
+      "r2": 0.2786,
+      "mae": 0.7214,
+      "rmse": 0.769
+    },
+    "ensemble": {
+      "accuracy": 0.3632,
+      "f1": 0.3515,
+      "r2": 0.3632,
+      "mae": 0.6368,
+      "rmse": 0.6485
+    }
+  }
+}

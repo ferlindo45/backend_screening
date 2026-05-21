@@ -1,9 +1,3 @@
 .venv/
 __pycache__/
 *.pyc
-.env
-api_test_results.json
-logs/
-data/
-models/saved_models/
-models/cache/

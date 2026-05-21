@@ -1,0 +1,35 @@
+{
+  "stock_code": "SMGR.JK",
+  "trained_date": "2026-05-20T06:55:47.978479",
+  "samples": 1003,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5721,
+      "f1": 0.5222,
+      "r2": 0.5721,
+      "mae": 0.4279,
+      "rmse": 0.4778
+    },
+    "xgboost": {
+      "accuracy": 0.5821,
+      "f1": 0.4857,
+      "r2": 0.5821,
+      "mae": 0.4179,
+      "rmse": 0.5143
+    },
+    "logistic_regression": {
+      "accuracy": 0.3682,
+      "f1": 0.2918,
+      "r2": 0.3682,
+      "mae": 0.6318,
+      "rmse": 0.7082
+    },
+    "ensemble": {
+      "accuracy": 0.5672,
+      "f1": 0.5149,
+      "r2": 0.5672,
+      "mae": 0.4328,
+      "rmse": 0.4851
+    }
+  }
+}

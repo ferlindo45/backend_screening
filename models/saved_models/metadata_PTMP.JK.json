@@ -1,0 +1,35 @@
+{
+  "stock_code": "PTMP.JK",
+  "trained_date": "2026-05-20T06:57:48.816826",
+  "samples": 557,
+  "evaluation": {
+    "random_forest": {
+      "accuracy": 0.5714,
+      "f1": 0.522,
+      "r2": 0.5714,
+      "mae": 0.4286,
+      "rmse": 0.478
+    },
+    "xgboost": {
+      "accuracy": 0.5536,
+      "f1": 0.5357,
+      "r2": 0.5536,
+      "mae": 0.4464,
+      "rmse": 0.4643
+    },
+    "logistic_regression": {
+      "accuracy": 0.5804,
+      "f1": 0.5787,
+      "r2": 0.5804,
+      "mae": 0.4196,
+      "rmse": 0.4213
+    },
+    "ensemble": {
+      "accuracy": 0.5714,
+      "f1": 0.547,
+      "r2": 0.5714,
+      "mae": 0.4286,
+      "rmse": 0.453
+    }
+  }
+}
